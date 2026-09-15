@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RD CRM · Links de pagamento</title>
+<style>
+:root{--bg:#f4f6fb;--surface:#fff;--ink:#1b2430;--muted:#5b6778;--line:#d8dee8;--brand:#0f62fe;--ok:#198038;--warn:#b28600;--danger:#da1e28;--radius:12px;--shadow:0 8px 24px rgba(27,36,48,.08);--sans:Inter,Segoe UI,sans-serif}
+*{box-sizing:border-box}body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--ink)}.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}aside{background:#0b1f33;color:#fff;padding:20px 16px}.logo{font-weight:800;letter-spacing:.04em;margin-bottom:28px}nav button{display:block;width:100%;text-align:left;background:transparent;border:0;color:#c9d6e5;padding:10px 12px;border-radius:8px;margin-bottom:6px;cursor:pointer}nav button.active,nav button:hover{background:#16324c;color:#fff}header{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;background:#fff;border-bottom:1px solid var(--line)}main{padding:24px 28px 48px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.row{display:flex;gap:16px;flex-wrap:wrap}.col{flex:1;min-width:280px}h1,h2,h3{margin:0 0 8px}p{color:var(--muted)}label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit}.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}button.primary,button.ghost,button.danger{border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}button.primary{background:var(--brand);color:#fff}button.ghost{background:#eef2f8}button.danger{background:var(--danger);color:#fff}.pill{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}.pill.ok{background:#defbe6;color:var(--ok)}.pill.warn{background:#fff1c2;color:var(--warn)}.hidden{display:none!important}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:14px}.preview{background:#0b1f33;color:#fff;border-radius:16px;padding:20px;min-height:360px}.preview h3{color:#fff}.preview p{color:#c9d6e5}.price{font-size:28px;font-weight:800;margin:12px 0}.notice{background:#fff8e1;border:1px solid #f0d48a;color:#6f4e00;padding:10px 12px;border-radius:8px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+<div class="logo">RD STATION CRM</div>
+<nav>
+<button class="active" data-view="deal">Negocio</button>
+<button data-view="links">Links de pagamento</button>
+</nav>
+</aside>
+<div>
+<header>
+<strong>Wave 3 · Prototipo navegavel</strong>
+<span class="pill warn" id="env-pill">Rascunho</span>
+</header>
+<main>
+<section id="view-deal">
+<div class="card">
+<h1>Acme · Implementacao CRM</h1>
+<p>Negocio ganho · R$ 4.800,00 · responsavel: Ana Souza</p>
+<div class="actions">
+<button class="primary" id="open-create">Criar link de pagamento</button>
+<button class="ghost" data-view="links">Ver links deste negocio</button>
+</div>
+</div>
+</section>
+<section id="view-links" class="hidden">
+<div class="card">
+<h2>Links deste negocio</h2>
+<table>
+<thead><tr><th>Nome</th><th>Tipo</th><th>Status</th><th>Valor</th><th></th></tr></thead>
+<tbody id="links-body"></tbody>
+</table>
+<div class="actions"><button class="primary" id="open-create-2">Novo link</button></div>
+</div>
+</section>
+<section id="view-create" class="hidden">
+<div class="row">
+<div class="col card">
+<h2>Criar link</h2>
+<label>Nome interno</label>
+<input id="link-name" value="Kickoff Acme" />
+<label>Tipo</label>
+<select id="link-type">
+<option value="simple">Link simples</option>
+<option value="items">Link com itens</option>
+</select>
+<div id="simple-fields">
+<label>Descricao</label>
+<input id="simple-desc" value="Setup inicial + 30 dias de suporte" />
+<label>Valor (R$)</label>
+<input id="simple-amount" type="number" value="4800" />
+</div>
+<div id="items-fields" class="hidden">
+<label>Itens</label>
+<table>
+<thead><tr><th>Item</th><th>Qtd</th><th>Preco</th></tr></thead>
+<tbody>
+<tr><td>Implementacao</td><td>1</td><td>3200</td></tr>
+<tr><td>Treinamento</td><td>2</td><td>800</td></tr>
+</tbody>
+</table>
+</div>
+<label>Vencimento</label>
+<input id="due-date" type="date" value="2026-09-30" />
+<div class="actions">
+<button class="ghost" data-view="deal">Cancelar</button>
+<button class="primary" id="publish">Publicar link</button>
+</div>
+</div>
+<div class="col preview" id="preview">
+<h3 id="pv-title">Kickoff Acme</h3>
+<p id="pv-desc">Setup inicial + 30 dias de suporte</p>
+<div class="price" id="pv-price">R$ 4.800,00</div>
+<p>Pague com cartao, boleto ou Pix.</p>
+</div>
+</div>
+</section>
+<section id="view-published" class="hidden">
+<div class="row">
+<div class="col card">
+<h2>Link publicado</h2>
+<p>O checkout ja esta no ar. Campos financeiros ficam congelados.</p>
+<label>URL publica</label>
+<input id="public-url" readonly />
+<div class="notice">Depois de publicado, valor, itens e vencimento nao podem mais ser editados.</div>
+<div class="actions">
+<button class="ghost" id="copy-url">Copiar URL</button>
+<button class="danger" id="disable-link">Desativar link</button>
+<button class="ghost" data-view="links">Voltar aos links</button>
+</div>
+</div>
+<div class="col preview">
+<h3>Checkout congelado</h3>
+<p id="pub-desc"></p>
+<div class="price" id="pub-price"></div>
+<p>Pagamento seguro RD Station.</p>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+<script>
+const brl = (n) => n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const state = { type: "simple", name: "Kickoff Acme", desc: "Setup inicial + 30 dias de suporte", amount: 4800, url: "", disabled: false };
+const views = ["deal", "links", "create", "published"];
+function show(view) {
+  views.forEach((v) => document.getElementById("view-" + v).classList.toggle("hidden", v !== view));
+  document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("active", b.dataset.view === (view === "create" || view === "published" ? "links" : view)));
+}
+function renderPreview() {
+  document.getElementById("pv-title").textContent = document.getElementById("link-name").value;
+  const items = state.type === "items";
+  document.getElementById("pv-desc").textContent = items ? "Implementacao + Treinamento" : document.getElementById("simple-desc").value;
+  document.getElementById("pv-price").textContent = brl(items ? 4800 : Number(document.getElementById("simple-amount").value || 0));
+}
+function renderLinks() {
+  const body = document.getElementById("links-body");
+  if (!state.url) { body.innerHTML = "<tr><td colspan=\"5\">Nenhum link ainda.</td></tr>"; return; }
+  body.innerHTML = `<tr><td>${state.name}</td><td>${state.type === "items" ? "Com itens" : "Simples"}</td><td>${state.disabled ? "Desativado" : "Ativo"}</td><td>${brl(state.amount)}</td><td><button class=\"ghost\" id=\"open-published\">Abrir</button></td></tr>`;
+  document.getElementById("open-published").onclick = () => show("published");
+}
+function bind() {
+  document.querySelectorAll("[data-view]").forEach((el) => el.addEventListener("click", () => show(el.dataset.view)));
+  document.getElementById("open-create").onclick = () => show("create");
+  document.getElementById("open-create-2").onclick = () => show("create");
+  document.getElementById("link-type").onchange = (e) => {
+    state.type = e.target.value;
+    document.getElementById("simple-fields").classList.toggle("hidden", state.type !== "simple");
+    document.getElementById("items-fields").classList.toggle("hidden", state.type !== "items");
+    renderPreview();
+  };
+  ["link-name", "simple-desc", "simple-amount"].forEach((id) => document.getElementById(id).addEventListener("input", renderPreview));
+  document.getElementById("publish").onclick = () => {
+    state.name = document.getElementById("link-name").value;
+    state.desc = state.type === "items" ? "Implementacao + Treinamento" : document.getElementById("simple-desc").value;
+    state.amount = state.type === "items" ? 4800 : Number(document.getElementById("simple-amount").value || 0);
+    state.url = "https://pay.rdstation.com/l/acme-" + Date.now().toString().slice(-6);
+    state.disabled = false;
+    document.getElementById("public-url").value = state.url;
+    document.getElementById("pub-desc").textContent = state.desc;
+    document.getElementById("pub-price").textContent = brl(state.amount);
+    document.getElementById("env-pill").textContent = "Link publicado";
+    document.getElementById("env-pill").className = "pill ok";
+    renderLinks();
+    show("published");
+  };
+  document.getElementById("copy-url").onclick = () => navigator.clipboard.writeText(state.url);
+  document.getElementById("disable-link").onclick = () => {
+    state.disabled = true;
+    document.getElementById("env-pill").textContent = "Link desativado";
+    document.getElementById("env-pill").className = "pill warn";
+    renderLinks();
+  };
+  renderPreview();
+  renderLinks();
+}
+bind();
+</script>
+</body>
+</html>
