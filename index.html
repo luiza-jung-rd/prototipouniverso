@@ -15,15 +15,27 @@
     button,input,select{font-family:inherit}button{cursor:pointer;border:none;background:none}
     .layout{display:grid;grid-template-rows:64px 1fr;grid-template-columns:64px 1fr;grid-template-areas:"navbar navbar" "sidebar content";height:100vh;overflow:hidden}
     .navbar{grid-area:navbar;background:var(--color-nav-bg);display:flex;align-items:center;justify-content:space-between;padding:var(--size-spacing-03);height:64px;z-index:9600}
-    .navbar-logo{display:flex;align-items:center;height:40px}
-    .navbar-logo-img{height:40px;width:auto;display:block;flex-shrink:0}
-    .account-name{color:#fff;font-family:var(--font-crm);font-size:14px;font-weight:700;letter-spacing:-.14px}
-    .navbar-secondary,.navbar-icons,.account-menu{display:flex;align-items:center;gap:8px}
-    .navbar-icon-btn,.sidebar-item-inner{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;position:relative}
-    .navbar-icon-btn:hover,.sidebar-item-inner:hover{background:rgba(255,255,255,.08)}
-    .badge-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:#e60f57;border-radius:50%}
-    .navbar-divider{width:1px;height:32px;background:rgba(255,255,255,.15)}
-    .account-avatar{width:24px;height:24px;border-radius:8px;background:var(--support-mint);color:#002233;font:var(--text-xs);font-weight:700;display:flex;align-items:center;justify-content:center}
+    .navbar img{max-width:none;display:block}
+    .navbar-product{display:flex;align-items:center;height:40px;padding-left:8px}
+    .navbar-logo{display:flex;align-items:center;gap:12px}
+    .navbar-rds{position:relative;width:107px;height:32px;flex-shrink:0}
+    .navbar-rds-symbol{position:absolute;left:0;top:0}
+    .navbar-rds-lettering{position:absolute;inset:9.38% 0 9.38% 41.12%}
+    .navbar-rds-line{position:absolute;inset:0 96.83% 0 0;background:rgba(0,219,255,.25)}
+    .navbar-crm-word{position:absolute;left:23.81%;top:21.12%}
+    .navbar-product-item{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;flex-shrink:0}
+    .navbar-secondary{display:flex;align-items:center;gap:8px}
+    .navbar-icons{display:flex;align-items:center}
+    .navbar-icon-btn{width:40px;height:40px;padding:8px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;position:relative;flex-shrink:0}
+    .navbar-icon-btn:hover,.navbar-product-item:hover,.account-menu:hover,.sidebar-item-inner:hover{background:rgba(255,255,255,.08)}
+    .badge-dot{position:absolute;top:4px;left:28px;width:8px;height:8px;background:#e60f57;border-radius:8px}
+    .navbar-divider{width:1px;height:32px;background:#2e556b;border-radius:999px;flex-shrink:0}
+    .account-menu{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;max-width:240px}
+    .account-avatar{width:24px;height:24px;border-radius:8px;background:var(--support-mint);overflow:hidden;position:relative;flex-shrink:0}
+    .account-avatar img{position:absolute;left:14.06%;top:4px;width:112.5%;aspect-ratio:40/41;height:auto}
+    .account-name{color:#fff;font-family:var(--font);font-size:14px;font-weight:700;line-height:1.4;letter-spacing:-.14px;white-space:nowrap}
+    .account-caret{flex-shrink:0}
+    .sidebar-item-inner{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:#fff;position:relative}
     .sidebar{grid-area:sidebar;background:var(--color-nav-bg);display:flex;flex-direction:column;gap:8px;padding-top:12px}
     .sidebar-item{display:flex;justify-content:center;padding:12px}
     .sidebar-item.is-active .sidebar-item-inner{background:rgba(255,255,255,.1)}
@@ -204,16 +216,28 @@
 <body>
 <div id="crm-root" class="layout">
   <nav class="navbar">
-    <div class="navbar-logo"><svg class="navbar-logo-img" xmlns="http://www.w3.org/2000/svg" width="108" height="40" viewBox="0 0 108 40" fill="none" aria-label="RD Station CRM"><path fill="#00DBFF" d="M20 4.2 33.86 12.1v15.8L20 35.8 6.14 27.9V12.1L20 4.2Z"/><path fill="#001927" d="M20 12.2 26.93 16.2v7.6L20 27.8 13.07 23.8v-7.6L20 12.2Z"/><rect x="42.5" y="10" width="1" height="20" fill="#fff" opacity=".45"/><text x="52" y="25.5" fill="#fff" font-family="Nunito Sans, DM Sans, sans-serif" font-size="16" font-weight="700" letter-spacing="-.2">CRM</text><path d="M90 16.5 95.5 22 101 16.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="navbar-product">
+      <div class="navbar-logo">
+        <span class="navbar-rds" aria-label="RD Station CRM">
+          <img class="navbar-rds-symbol" src="navbar/rds-symbol.svg" alt="" />
+          <span class="navbar-rds-lettering">
+            <span class="navbar-rds-line"></span>
+            <img class="navbar-crm-word" src="navbar/crm-lettering.svg" alt="" />
+          </span>
+        </span>
+        <span class="navbar-product-item" aria-hidden="true"><img src="navbar/chevron-down.svg" alt="" /></span>
+      </div>
+    </div>
     <div class="navbar-secondary">
       <div class="navbar-icons">
-        <span class="navbar-icon-btn"><span class="icon">search</span></span>
-        <span class="navbar-icon-btn"><span class="icon">notifications</span><span class="badge-dot"></span></span>
-        <span class="navbar-icon-btn"><span class="icon">help</span></span>
-        <span class="navbar-icon-btn"><span class="icon">apps</span></span>
+        <span class="navbar-icon-btn"><img src="navbar/search.svg" alt="" /></span>
+        <span class="navbar-icon-btn"><img src="navbar/diamond.svg" alt="" /></span>
+        <span class="navbar-icon-btn"><img src="navbar/apps.svg" alt="" /></span>
+        <span class="navbar-icon-btn"><img src="navbar/bell.svg" alt="" /><span class="badge-dot"></span></span>
+        <span class="navbar-icon-btn"><img src="navbar/settings.svg" alt="" /></span>
       </div>
       <div class="navbar-divider"></div>
-      <div class="account-menu"><span class="account-avatar">A</span><span class="account-name">Agência RD</span><span class="icon" style="width:16px;height:16px;font-size:16px">expand_more</span></div>
+      <div class="account-menu"><span class="account-avatar"><img src="navbar/avatar-totvs.png" alt="" /></span><span class="account-name">Agência RD</span><img class="account-caret" src="navbar/chevron-down.svg" alt="" /></div>
     </div>
   </nav>
   <aside class="sidebar">
