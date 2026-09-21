@@ -1,6 +1,6 @@
 export type PersonType = 'pj' | 'pf' | ''
 
-export type LinkStatus = 'ativo' | 'inativo' | 'rascunho' | 'expirado' | 'encerrado'
+export type LinkStatus = 'ativo' | 'inativo'
 export type LinkType = 'unico' | 'reutilizavel'
 export type PaymentStatus = 'pago' | 'aguardando' | 'cancelado' | 'rejeitado'
 export type PaymentMethod = 'pix' | 'cartao' | 'boleto'
@@ -121,7 +121,7 @@ export const INITIAL_LINKS: PaymentLink[] = [
     id: '3',
     name: 'Abril – EM – Turma B Noturno',
     description: 'Ensino médio noturno',
-    status: 'rascunho',
+    status: 'inativo',
     createdAt: '29/03/2026',
     dueAt: '29/03/2026',
     type: 'reutilizavel',
@@ -135,7 +135,7 @@ export const INITIAL_LINKS: PaymentLink[] = [
     id: '4',
     name: 'Abril – EM – Turma B Matutino',
     description: 'Ensino médio matutino',
-    status: 'expirado',
+    status: 'inativo',
     createdAt: '29/03/2026',
     dueAt: '29/03/2026',
     type: 'reutilizavel',
@@ -149,7 +149,7 @@ export const INITIAL_LINKS: PaymentLink[] = [
     id: '5',
     name: 'Março – EM – Turma A Noturno',
     description: 'Turma A noturno',
-    status: 'encerrado',
+    status: 'inativo',
     createdAt: '27/02/2026',
     dueAt: '27/02/2026',
     type: 'unico',
@@ -169,7 +169,7 @@ export const INITIAL_LINKS: PaymentLink[] = [
     id: '6',
     name: 'Março – EM – Turma A Matutino',
     description: 'Turma A matutino',
-    status: 'rascunho',
+    status: 'inativo',
     createdAt: '27/02/2026',
     dueAt: '27/02/2026',
     type: 'reutilizavel',
@@ -193,9 +193,6 @@ export function statusLabel(status: LinkStatus) {
   return {
     ativo: 'Ativo',
     inativo: 'Inativo',
-    rascunho: 'Rascunho',
-    expirado: 'Expirado',
-    encerrado: 'Encerrado',
   }[status]
 }
 
@@ -203,10 +200,19 @@ export function statusClass(status: LinkStatus) {
   return {
     ativo: 'badge-success',
     inativo: 'badge-danger',
-    rascunho: 'badge-neutral',
-    expirado: 'badge-warning',
-    encerrado: 'badge-info',
   }[status]
+}
+
+export function isLinkPaid(link: PaymentLink) {
+  return link.payments.some((payment) => payment.status === 'pago')
+}
+
+export function linkPaymentLabel(link: PaymentLink) {
+  return isLinkPaid(link) ? 'Pago' : 'Não pago'
+}
+
+export function linkPaymentClass(link: PaymentLink) {
+  return isLinkPaid(link) ? 'badge-success' : 'badge-neutral'
 }
 
 export function paymentStatusLabel(status: PaymentStatus) {

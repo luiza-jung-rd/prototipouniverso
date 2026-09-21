@@ -71,6 +71,7 @@ export function LinkDetailPage() {
         </article>
         <article className="card" style={{ marginBottom: 16 }}>
           <h3>Itens no link</h3>
+          <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
@@ -89,6 +90,7 @@ export function LinkDetailPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </article>
         <article className="card">
           <div className="page-title-row" style={{ marginBottom: 12 }}>
@@ -102,6 +104,7 @@ export function LinkDetailPage() {
               <input className="control" placeholder="Buscar contato" value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
           </div>
+          <div className="table-wrap">
           <table className="data-table">
             <thead>
               <tr>
@@ -130,6 +133,7 @@ export function LinkDetailPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </article>
       </div>
     </AppShell>

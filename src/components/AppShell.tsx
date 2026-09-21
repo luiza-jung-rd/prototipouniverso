@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="avatar">
               <img src={avatar} alt="" />
             </span>
-            <span>Agência RD</span>
+            <span className="account-name">Agência RD</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M4 6l4 4 4-4" stroke="#00DBFF" strokeWidth="1.6" strokeLinecap="round" />
             </svg>

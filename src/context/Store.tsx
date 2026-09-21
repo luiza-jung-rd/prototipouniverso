@@ -106,10 +106,15 @@ type Store = {
 const StoreContext = createContext<Store | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [onboarded, setOnboarded] = useState(false)
+  const [onboarded, setOnboardedState] = useState(() => sessionStorage.getItem('totvs-onboarded') === '1')
   const [onboarding, setOnboarding] = useState<OnboardingData>(emptyOnboarding)
   const [links, setLinks] = useState<PaymentLink[]>(INITIAL_LINKS)
   const [toast, setToast] = useState<string | null>(null)
+
+  function setOnboarded(value: boolean) {
+    setOnboardedState(value)
+    sessionStorage.setItem('totvs-onboarded', value ? '1' : '0')
+  }
 
   const value = useMemo<Store>(
     () => ({

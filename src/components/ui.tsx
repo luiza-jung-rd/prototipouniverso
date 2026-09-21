@@ -3,10 +3,11 @@ import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAt
 export function Button({
   variant = 'primary',
   children,
+  className = '',
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger' | 'icon' | 'neutral' }) {
   return (
-    <button className={`btn btn-${variant}`} {...props}>
+    <button className={`btn btn-${variant} ${className}`.trim()} {...props}>
       {children}
     </button>
   )
@@ -24,19 +25,19 @@ export function Field({
   children: ReactNode
 }) {
   return (
-    <label className="field">
+    <div className="field">
       <span className="field-label">
         {label}
         {required ? <span className="required"> *</span> : null}
       </span>
       {children}
       {hint ? <span className="hint">{hint}</span> : null}
-    </label>
+    </div>
   )
 }
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} />
+export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={`control ${className}`.trim()} {...props} />
 }
 
 export function Select({ children, className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
@@ -58,7 +59,7 @@ export function Modal({
 }) {
   return (
     <div className="overlay" onClick={onClose}>
-      <div className="modal" onClick={(event) => event.stopPropagation()}>
+      <div className="modal" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>
         <button className="modal-close" onClick={onClose} aria-label="Fechar">
           ×
         </button>
@@ -66,5 +67,13 @@ export function Modal({
         {children}
       </div>
     </div>
+  )
+}
+
+export function TrashIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+      <path d="M4 6h12M8 6V4h4v2M7 6v9h6V6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }

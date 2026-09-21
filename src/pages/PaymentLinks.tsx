@@ -4,6 +4,8 @@ import { AppShell } from '../components/AppShell'
 import { Button, Select } from '../components/ui'
 import {
   formatBRL,
+  linkPaymentClass,
+  linkPaymentLabel,
   linkTotal,
   statusClass,
   statusLabel,
@@ -47,12 +49,10 @@ export function PaymentLinksPage() {
             <option value="">Status</option>
             <option value="ativo">Ativo</option>
             <option value="inativo">Inativo</option>
-            <option value="rascunho">Rascunho</option>
-            <option value="expirado">Expirado</option>
-            <option value="encerrado">Encerrado</option>
           </Select>
           <input className="control" type="date" style={{ width: 220 }} aria-label="Data" />
         </div>
+        <div className="table-wrap">
         <table className="data-table">
           <thead>
             <tr>
@@ -62,7 +62,7 @@ export function PaymentLinksPage() {
               <th>Vencimento</th>
               <th>Valor do link</th>
               <th>Tipo de link</th>
-              <th>Quant. pagamentos</th>
+              <th>Pagamentos</th>
               <th />
             </tr>
           </thead>
@@ -82,9 +82,7 @@ export function PaymentLinksPage() {
                 <td>{formatBRL(linkTotal(link))}</td>
                 <td>{link.type === 'unico' ? 'Único' : 'Reutilizável'}</td>
                 <td>
-                  {link.type === 'unico'
-                    ? `${link.payments.filter((p) => p.status === 'pago').length} de 1`
-                    : link.payments.length}
+                  <span className={`badge ${linkPaymentClass(link)}`}>{linkPaymentLabel(link)}</span>
                 </td>
                 <td className="row-actions">
                   <button className="btn btn-ghost" type="button" onClick={() => setMenuId(menuId === link.id ? null : link.id)}>
@@ -131,6 +129,7 @@ export function PaymentLinksPage() {
             ))}
           </tbody>
         </table>
+        </div>
         <div className="pagination">
           <span>Anterior</span>
           <button className="current" type="button">1</button>

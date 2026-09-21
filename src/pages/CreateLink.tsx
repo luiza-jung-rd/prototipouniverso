@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppShell } from '../components/AppShell'
-import { Button, Field, Input, Modal, Select } from '../components/ui'
+import { Button, Field, Input, Modal, Select, TrashIcon } from '../components/ui'
 import { newItem, useStore } from '../context/Store'
 import { formatBRL, type LinkItem, type LinkType, type PaymentLink } from '../data/mock'
 
@@ -65,12 +65,15 @@ export function CreateLinkPage() {
     <AppShell>
       <div className="workspace-inner">
         <p className="page-kicker">Links de pagamentos</p>
-        <div className="page-title-row">
-          <h1 className="page-title">
-            <Link to="/links" className="back-link">
-              ← {tab === 'config' ? 'Gerenciar configurações para este link de pagamento' : 'Criar link de pagamento'}
+        <div className="page-header">
+          <div className="page-header-main">
+            <Link to="/links" className="back-btn" aria-label="Voltar para links">
+              ←
             </Link>
-          </h1>
+            <h1 className="page-title">
+              {tab === 'config' ? 'Gerenciar configurações para este link de pagamento' : 'Criar link de pagamento'}
+            </h1>
+          </div>
           <Button type="button" disabled={!canPublish} onClick={() => (tab === 'itens' ? setConfirmOpen(true) : publish())}>
             {tab === 'config' ? 'Publicar link' : 'Criar link de pagamento'}
           </Button>
@@ -114,23 +117,30 @@ export function CreateLinkPage() {
                     <Input value={item.description} onChange={(e) => patchItem(item.id, { description: e.target.value })} />
                   </Field>
                   <Field label="Preço unitário" required>
-                    <Input
-                      type="number"
-                      min={0}
-                      value={item.unitPrice || ''}
-                      onChange={(e) => patchItem(item.id, { unitPrice: Number(e.target.value) })}
-                      placeholder="3000"
-                    />
+                    <div className="control-prefix">
+                      <span>R$</span>
+                      <Input
+                        inputMode="decimal"
+                        value={item.unitPrice || ''}
+                        onChange={(e) => patchItem(item.id, { unitPrice: Number(e.target.value.replace(/\D/g, '')) })}
+                        placeholder="0,00"
+                      />
+                    </div>
                   </Field>
                   <Field label="Quantidade" required>
-                    <Input type="number" min={1} value={item.quantity} onChange={(e) => patchItem(item.id, { quantity: Number(e.target.value) })} />
+                    <Input
+                      inputMode="numeric"
+                      min={1}
+                      value={item.quantity}
+                      onChange={(e) => patchItem(item.id, { quantity: Math.max(1, Number(e.target.value.replace(/\D/g, '')) || 1) })}
+                    />
                   </Field>
                   {index > 0 ? (
-                    <button className="btn btn-primary" type="button" onClick={() => setItems(items.filter((row) => row.id !== item.id))} aria-label="Remover item">
-                      🗑
+                    <button className="btn btn-icon" type="button" onClick={() => setItems(items.filter((row) => row.id !== item.id))} aria-label="Remover item">
+                      <TrashIcon />
                     </button>
                   ) : (
-                    <span />
+                    <span className="item-spacer" />
                   )}
                 </div>
               ))}
@@ -140,17 +150,19 @@ export function CreateLinkPage() {
             </article>
             <article className="card">
               <h3>Total</h3>
+              <div className="total-list">
               {items.map((item) => (
-                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#405466' }}>
+                <div key={item.id} className="total-row">
                   <span>
                     {item.quantity}x {formatBRL(item.unitPrice)}
                   </span>
                   <span>{formatBRL(item.unitPrice * item.quantity)}</span>
                 </div>
               ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #d6dbde', paddingTop: 12, fontWeight: 700 }}>
+              <div className="total-row total-row-strong">
                 <span>Total:</span>
                 <span>{formatBRL(total)}</span>
+              </div>
               </div>
             </article>
           </>
@@ -195,7 +207,7 @@ export function CreateLinkPage() {
                 Boleto bancário
               </label>
               {boleto ? (
-                <div className="nested" style={{ display: 'grid', gap: 12 }}>
+                <div className="nested">
                   <Field label="Vencimento">
                     <Input type="date" value={boletoDue} onChange={(e) => setBoletoDue(e.target.value)} />
                   </Field>
@@ -219,7 +231,7 @@ export function CreateLinkPage() {
               <Field label="Data">
                 <Input type="date" value={dueAt} disabled={noDue} onChange={(e) => setDueAt(e.target.value)} />
               </Field>
-              <label className="toggle" style={{ marginTop: 12 }}>
+              <label className="toggle" style={{ marginTop: 8 }}>
                 <input type="checkbox" checked={noDue} onChange={(e) => setNoDue(e.target.checked)} />
                 Não tem vencimento
               </label>

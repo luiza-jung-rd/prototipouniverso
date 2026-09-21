@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppShell } from '../components/AppShell'
+import { Dropfile } from '../components/Dropfile'
 import { Button, Field, Input, Select } from '../components/ui'
 import { BANKS, MCC_OPTIONS } from '../data/mock'
 import { useStore } from '../context/Store'
@@ -227,13 +228,13 @@ export function OnboardingPage() {
               <p className="page-subtitle">Envie seus documentos para aprovação</p>
               <h3 className="section-title" style={{ marginTop: 8 }}>Documento do responsável</h3>
               <p className="page-subtitle">
-                O documento deve enviado deve ser do responsável legal da empresa (a identidade deve corresponder com os dados preenchidos no primeiro passo)
+                O documento enviado deve ser do responsável legal da empresa (a identidade deve corresponder com os dados preenchidos no primeiro passo)
               </p>
-              <FileDrop label="Frente do documento" value={onboarding.docFront} onPick={(name) => patchOnboarding({ docFront: name })} />
-              <FileDrop label="Verso do documento" value={onboarding.docBack} onPick={(name) => patchOnboarding({ docBack: name })} />
+              <Dropfile label="Frente do documento" value={onboarding.docFront} onPick={(name) => patchOnboarding({ docFront: name })} />
+              <Dropfile label="Verso do documento" value={onboarding.docBack} onPick={(name) => patchOnboarding({ docBack: name })} />
               <h3 className="section-title">Foto do responsável</h3>
               <p className="page-subtitle">A foto deve corresponder a do documento</p>
-              <FileDrop label="Foto do responsável" value={onboarding.selfie} onPick={(name) => patchOnboarding({ selfie: name })} />
+              <Dropfile value={onboarding.selfie} onPick={(name) => patchOnboarding({ selfie: name })} />
             </>
           )}
 
@@ -248,44 +249,16 @@ export function OnboardingPage() {
 
           <div className="form-actions">
             {step > 0 ? (
-              <Button variant="secondary" type="button" onClick={() => setStep(step - 1)}>
+              <Button variant="tertiary" type="button" onClick={() => setStep(step - 1)}>
                 Voltar
               </Button>
             ) : null}
             <Button type="button" onClick={next} disabled={step === 0 && !onboarding.personType}>
-              Próximo
+              {step === 4 ? 'Ir para o dashboard' : 'Próximo'}
             </Button>
           </div>
         </section>
       </div>
     </AppShell>
-  )
-}
-
-function FileDrop({
-  label,
-  value,
-  onPick,
-}: {
-  label: string
-  value: string
-  onPick: (name: string) => void
-}) {
-  return (
-    <div style={{ marginTop: 16 }}>
-      <div className="field-label" style={{ marginBottom: 8 }}>{label}</div>
-      <label className="upload-box">
-        <input
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          hidden
-          onChange={(event) => onPick(event.target.files?.[0]?.name ?? 'documento.jpg')}
-        />
-        <div style={{ fontSize: 28, marginBottom: 8 }}>⬇️</div>
-        Arraste e solte seu arquivo aqui ou <strong>clique para selecionar</strong>
-        <div className="hint">Formatos aceitos: .pdf .jpg</div>
-        {value ? <div className="file-chip">{value}</div> : null}
-      </label>
-    </div>
   )
 }
