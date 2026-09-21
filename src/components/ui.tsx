@@ -48,6 +48,25 @@ export function Select({ children, className, ...props }: SelectHTMLAttributes<H
   )
 }
 
+export function Tooltip({
+  text,
+  placement = 'top',
+  children,
+}: {
+  text: string
+  placement?: 'top' | 'right'
+  children: ReactNode
+}) {
+  return (
+    <span className={`tg-tooltip-anchor tg-tooltip-anchor--${placement}`}>
+      {children}
+      <span className="tg-tooltip" role="tooltip">
+        {text}
+      </span>
+    </span>
+  )
+}
+
 export function Modal({
   title,
   children,

@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AppShell } from '../components/AppShell'
-import { Button, Field, Input, Modal, Select, TrashIcon } from '../components/ui'
+import { Button, Field, Input, Modal, Select, Tooltip, TrashIcon } from '../components/ui'
 import { newItem, useStore } from '../context/Store'
 import { formatBRL, type LinkItem, type LinkType, type PaymentLink } from '../data/mock'
 
@@ -11,7 +11,9 @@ export function CreateLinkPage() {
   const [tab, setTab] = useState<'itens' | 'config'>('itens')
   const [name, setName] = useState('Abril – EF – Turma B Noturno')
   const [description, setDescription] = useState('Link de pagamento para a turma de Abril')
-  const [type, setType] = useState<LinkType>('reutilizavel')
+  const [type, setType] = useState<LinkType>('unico')
+  const [typeOpen, setTypeOpen] = useState(false)
+  const typeRef = useRef<HTMLDivElement>(null)
   const [items, setItems] = useState<LinkItem[]>([
     { id: 'seed-1', name: 'Ensino fundamental', description: 'Cobrança mensal do ano letivo', unitPrice: 3000, quantity: 1 },
   ])
@@ -34,6 +36,14 @@ export function CreateLinkPage() {
     [items],
   )
   const canPublish = Boolean(name && items[0]?.name && items[0]?.unitPrice)
+
+  useEffect(() => {
+    function handleClick(event: MouseEvent) {
+      if (!typeRef.current?.contains(event.target as Node)) setTypeOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   function patchItem(id: string, patch: Partial<LinkItem>) {
     setItems((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)))
@@ -99,10 +109,42 @@ export function CreateLinkPage() {
                   <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Isso é um placeholder" />
                 </Field>
                 <Field label="Tipo de link">
-                  <Select value={type} onChange={(e) => setType(e.target.value as LinkType)}>
-                    <option value="unico">Único</option>
-                    <option value="reutilizavel">Reutilizável</option>
-                  </Select>
+                  <div className="type-select" ref={typeRef}>
+                    <button
+                      type="button"
+                      className="control type-select-trigger"
+                      aria-haspopup="listbox"
+                      aria-expanded={typeOpen}
+                      onClick={() => setTypeOpen((open) => !open)}
+                    >
+                      Único
+                    </button>
+                    {typeOpen ? (
+                      <ul className="type-select-menu" role="listbox">
+                        <li>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={type === 'unico'}
+                            className="type-select-option"
+                            onClick={() => {
+                              setType('unico')
+                              setTypeOpen(false)
+                            }}
+                          >
+                            Único
+                          </button>
+                        </li>
+                        <li>
+                          <Tooltip text="em breve" placement="right">
+                            <button type="button" role="option" aria-disabled="true" className="type-select-option is-disabled">
+                              Reutilizável
+                            </button>
+                          </Tooltip>
+                        </li>
+                      </ul>
+                    ) : null}
+                  </div>
                 </Field>
               </div>
             </article>

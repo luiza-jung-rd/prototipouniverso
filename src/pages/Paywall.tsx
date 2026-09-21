@@ -4,15 +4,20 @@ import avatar from '../assets/avatar.png'
 import iconSearch from '../assets/icon-search-nav.svg'
 import iconBell from '../assets/icon-bell-nav.svg'
 import iconGear from '../assets/icon-gear-nav.svg'
-import iconPix from '../assets/icon-pix.svg'
+import heroChart from '../assets/paywall-chart.svg'
+import iconSales from '../assets/paywall-icon-sales.svg'
+import iconTicket from '../assets/paywall-icon-ticket.svg'
+import iconPix from '../assets/paywall-icon-pix.svg'
+import previewApp from '../assets/paywall-app.png'
+import previewModal from '../assets/paywall-modal.png'
 
 export function PaywallPage() {
   return (
     <div className="paywall">
       <header className="topbar">
         <div className="brand">
-          <img src={totvsLogo} alt="RD Station" width={139} height={40} />
-          <span className="brand-pay">RD Station</span>
+          <img src={totvsLogo} alt="TOTVS Pay" width={139} height={40} />
+          <span className="brand-pay">Pay</span>
         </div>
         <div className="topbar-actions">
           <button className="icon-btn" type="button" aria-label="Buscar">
@@ -38,8 +43,9 @@ export function PaywallPage() {
         </div>
       </header>
 
+      <div className="paywall-inner">
       <section className="paywall-hero">
-        <div>
+        <div className="hero-copy">
           <h1>Seus maiores desafios de cobrança, resolvidos!</h1>
           <p>
             A TOTVS Pay integra pagamentos ao seu fluxo de vendas, marketing e atendimento, eliminando
@@ -49,83 +55,42 @@ export function PaywallPage() {
             Faça sua conta gratuitamente
           </Link>
         </div>
-        <div className="hero-art">
-          <div className="hero-chart">
-            <svg className="spark" viewBox="0 0 400 180" preserveAspectRatio="none">
-              <path
-                d="M0 140 C 40 130, 70 90, 110 100 S 180 40, 220 70 S 300 20, 400 10"
-                fill="none"
-                stroke="#0a3a4a"
-                strokeWidth="3"
-                opacity="0.45"
-              />
-            </svg>
-          </div>
-          <div className="float-card float-1">
-            <span className="ic">💵</span>
+        <div className="hero-art" aria-hidden="true">
+          <img className="hero-chart-img" src={heroChart} alt="" width={485} height={314} />
+          <article className="float-card float-sales">
+            <span className="ic">
+              <img src={iconSales} alt="" width={48} height={48} />
+            </span>
             <div>
               <small>Total em vendas</small>
               <strong>R$ 100.493,99</strong>
             </div>
-          </div>
-          <div className="float-card float-2">
-            <span className="ic">📈</span>
+          </article>
+          <article className="float-card float-ticket">
+            <span className="ic">
+              <img src={iconTicket} alt="" width={32} height={32} />
+            </span>
             <div>
               <small>Ticket médio</small>
               <strong>R$ 3690,00</strong>
             </div>
-          </div>
-          <div className="float-card float-3">
+          </article>
+          <article className="float-card float-pix">
             <span className="ic">
-              <img src={iconPix} alt="" width={20} height={18} />
+              <img src={iconPix} alt="" width={32} height={32} />
             </span>
             <div>
               <small>No pix</small>
               <strong>R$ 70.000</strong>
             </div>
-          </div>
+          </article>
         </div>
       </section>
 
       <section className="paywall-panel">
-        <div className="preview-stack">
-          <div className="preview-window">
-            <div className="mini-top" />
-            <div className="mini-body">
-              <div style={{ fontSize: 12, color: '#405466' }}>Cobranças</div>
-              <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 12 }}>Links de Pagamentos</div>
-              <div style={{ height: 8, background: '#e6eaed', borderRadius: 8, width: '40%', marginBottom: 10 }} />
-              {['Abril – EF – Turma B Noturno', 'Abril – EF – Turma B Matutino', 'Abril – EM – Turma B Noturno'].map(
-                (name) => (
-                  <div key={name} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontSize: 12, color: '#0077a8', fontWeight: 700 }}>
-                    <span>{name}</span>
-                    <span style={{ color: '#1aa251' }}>●</span>
-                  </div>
-                ),
-              )}
-            </div>
-          </div>
-          <div className="preview-modal">
-            <div style={{ fontSize: 12, color: '#405466' }}>Sua cobrança foi criada</div>
-            <h3>Use seu link em suas estratégias</h3>
-            <div className="share-url">
-              <input className="control" readOnly value="https://totvspay.com" />
-            </div>
-            <div className="share-row">
-              <div>
-                <strong>E-mail</strong>
-                <div style={{ fontSize: 12, color: '#405466' }}>Encaminhar por email</div>
-              </div>
-              ✈️
-            </div>
-            <div className="share-row">
-              <div>
-                <strong>WhatsApp</strong>
-                <div style={{ fontSize: 12, color: '#405466' }}>Encaminhar por whatsapp</div>
-              </div>
-              ✈️
-            </div>
-          </div>
+        <div className="preview-stack" aria-hidden="true">
+          <img className="preview-app" src={previewApp} alt="" width={573} height={355} />
+          <img className="preview-modal-img" src={previewModal} alt="" width={492} height={311} />
         </div>
         <div className="case-copy">
           <p className="case-kicker">Caso de uso</p>
@@ -143,6 +108,7 @@ export function PaywallPage() {
           </Link>
         </div>
       </section>
+      </div>
     </div>
   )
 }
