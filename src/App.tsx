@@ -15,9 +15,11 @@ function Guard({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+
   return (
     <StoreProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <Routes>
           <Route path="/" element={<PaywallPage />} />
           <Route path="/credenciamento" element={<OnboardingPage />} />
