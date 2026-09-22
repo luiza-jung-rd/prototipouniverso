@@ -61,7 +61,6 @@ export function PaymentLinksPage() {
               <th>Criação</th>
               <th>Vencimento</th>
               <th>Valor do link</th>
-              <th>Tipo de link</th>
               <th>Pagamentos</th>
               <th />
             </tr>
@@ -80,7 +79,6 @@ export function PaymentLinksPage() {
                 <td>{link.createdAt}</td>
                 <td>{link.dueAt ?? '—'}</td>
                 <td>{formatBRL(linkTotal(link))}</td>
-                <td>{link.type === 'unico' ? 'Único' : 'Reutilizável'}</td>
                 <td>
                   <span className={`badge ${linkPaymentClass(link)}`}>{linkPaymentLabel(link)}</span>
                 </td>
