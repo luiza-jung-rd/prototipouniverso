@@ -2,6 +2,8 @@
 
 Protótipo throwaway da experiência TOTVS Pay, baseado no [arquivo Figma](https://www.figma.com/design/0lRpjpN4PLJkvF377w8GSh/Untitled).
 
+**Interface pública:** https://trizvictoria.github.io/triz-pd/
+
 Fluxo: **paywall → credenciamento → dashboard**. No dashboard, a funcionalidade interativa é **links de pagamento** (criar, listar, copiar, inativar, detalhar). Os números do dashboard e da listagem são dados falsos.
 
 ## Como rodar
