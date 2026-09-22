@@ -134,9 +134,9 @@ async function decrypt(buf,password){
   const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:120000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['decrypt']);
   return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data));
 }
-const state={user:'',pass:'',error:'',busy:false};
+const state={user:'',pass:'',product:'',error:'',busy:false};
 function loginView(){
-  const can=state.user.trim()&&state.pass&&!state.busy;
+  const can=state.user.trim()&&state.pass&&state.product&&!state.busy;
   return `<div class="login"><form class="login-card" id="login-form" novalidate>
     <header class="login-card__header">
       <div class="login-steps" aria-hidden="true"><span class="login-step"></span><span class="login-step is-current"></span></div>
@@ -145,6 +145,7 @@ function loginView(){
     <div class="login-card__fields">
       <label class="tg-field"><span class="tg-field__label">Usuário</span><span class="tg-input"><input id="login-user" placeholder="Insira o usuário" autocomplete="username"></span></label>
       <label class="tg-field"><span class="tg-field__label">Senha</span><span class="tg-input"><input id="login-password" type="password" placeholder="Insira a senha" autocomplete="current-password"></span></label>
+      <label class="tg-field"><span class="tg-field__label">Produto</span><span class="tg-input"><select id="login-product"><option value="" disabled ${!state.product?'selected':''}>Selecione</option><option value="totvs" ${state.product==='totvs'?'selected':''}>TOTVS Pay</option><option value="rd" ${state.product==='rd'?'selected':''}>RD Vendas</option></select></span></label>
     </div>
     ${state.error?`<p class="login-error" role="alert">${state.error}</p>`:''}
     <button class="tg-button tg-button--primary" data-act="login" ${can?'':'disabled'}>${state.busy?'Entrando…':'Entrar'}</button>
@@ -153,13 +154,16 @@ function loginView(){
 function bindLogin(){
   const user=document.getElementById('login-user');
   const pass=document.getElementById('login-password');
+  const product=document.getElementById('login-product');
   const submit=document.querySelector('[data-act="login"]');
-  const sync=()=>{submit.disabled=!(user.value.trim()&&pass.value)||state.busy};
+  const sync=()=>{submit.disabled=!(user.value.trim()&&pass.value&&product.value)||state.busy};
   user.value=state.user;
   pass.value=state.pass;
+  product.value=state.product;
   sync();
   user.oninput=()=>{state.user=user.value;if(state.error){state.error='';const err=document.querySelector('.login-error');if(err)err.remove()}sync()};
   pass.oninput=()=>{state.pass=pass.value;if(state.error){state.error='';const err=document.querySelector('.login-error');if(err)err.remove()}sync()};
+  product.onchange=()=>{state.product=product.value;if(state.error){state.error='';const err=document.querySelector('.login-error');if(err)err.remove()}sync()};
   document.getElementById('login-form').onsubmit=ev=>{ev.preventDefault();unlock()};
 }
 function renderLogin(){
@@ -167,11 +171,16 @@ function renderLogin(){
   bindLogin();
 }
 async function unlock(){
-  if(!(state.user.trim()&&state.pass)||state.busy) return;
+  if(!(state.user.trim()&&state.pass&&state.product)||state.busy) return;
   const uh=await sha256(normUser(state.user));
   const ph=await sha256('pd-ai|'+state.pass);
   if(!USERS.has(uh)||ph!==PASS){state.error='Usuário ou senha inválidos';renderLogin();return}
   state.busy=true;state.error='';renderLogin();
+  try{sessionStorage.setItem('pd-ai-auth',PASS)}catch(e){}
+  if(state.product==='totvs'){
+    location.href='totvs/';
+    return;
+  }
   try{
     const res=await fetch('flow.enc',{cache:'no-store'});
     if(!res.ok) throw new Error('missing');
