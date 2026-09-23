@@ -66,7 +66,20 @@
     .tg-message{display:flex;border-radius:8px;border-left:8px solid #00dbff;overflow:hidden}
     .tg-message__body{display:flex;gap:16px;flex:1;padding:12px 16px;border:1px solid #d6dbde;border-left:0;border-radius:0 8px 8px 0}
     .tg-group{display:flex;gap:8px;justify-content:flex-end;flex-wrap:nowrap}
-    .login{min-height:calc(100vh - 88px);display:flex;align-items:center;justify-content:center;padding:40px 24px}
+    .login{min-height:calc(100vh - 64px);display:flex;align-items:center;justify-content:center;padding:40px 24px}
+    .layout.is-login{grid-template-columns:1fr;grid-template-areas:"navbar" "content"}
+    .layout.is-login .sidebar{display:none}
+    .layout.is-login .content{border-radius:0}
+    .totvs-brand{display:flex;align-items:center;gap:8px;height:40px;padding-left:8px}
+    .totvs-brand--checkout,.totvs-brand--powered{padding-left:0;height:auto}
+    .totvs-brand--powered{gap:4px}
+    .totvs-brand__logo{display:block;height:32px;width:auto}
+    .totvs-brand--checkout .totvs-brand__logo{height:28px}
+    .totvs-brand--powered .totvs-brand__logo{height:14px}
+    .totvs-brand__pay{font-family:var(--font);font-weight:700;letter-spacing:-.02em;line-height:1}
+    .totvs-brand__pay--navy{color:#00dbff;font-size:22px}
+    .totvs-brand__pay--dark{color:#111;font-size:20px}
+    .totvs-brand--powered .totvs-brand__pay--dark{font-size:12px}
     .login-card{width:100%;max-width:412px;display:flex;flex-direction:column;gap:24px;padding:24px;background:#fff;border:1px solid #d6dbde;border-radius:16px}
     .login-card__header{display:flex;flex-direction:column;gap:12px}
     .login-steps{display:flex;gap:4px;padding-bottom:8px}
@@ -79,8 +92,23 @@
   </style>
 </head>
 <body>
-<div id="crm-root" class="layout">
-  <nav class="navbar">
+<div id="crm-root" class="layout is-login">
+  <nav class="navbar" id="login-nav">
+    <span class="totvs-brand" aria-label="TOTVS Pay">
+      <img class="totvs-brand__logo" src="totvs/assets/totvs-logo-_JTenmhF.svg" alt="" />
+      <span class="totvs-brand__pay totvs-brand__pay--navy">Pay</span>
+    </span>
+    <div class="navbar-secondary">
+      <div class="navbar-icons">
+        <span class="navbar-icon-btn"><img src="navbar/search.svg" alt="" /></span>
+        <span class="navbar-icon-btn"><img src="navbar/bell.svg" alt="" /><span class="badge-dot"></span></span>
+        <span class="navbar-icon-btn"><img src="navbar/settings.svg" alt="" /></span>
+      </div>
+      <div class="navbar-divider"></div>
+      <div class="account-menu"><span class="account-avatar"><img src="navbar/avatar-totvs.png" alt="" /></span><span class="account-name">Agência RD</span><img class="account-caret" src="navbar/chevron-down.svg" alt="" /></div>
+    </div>
+  </nav>
+  <nav class="navbar" id="crm-nav" hidden>
     <div class="navbar-product">
       <div class="navbar-logo">
         <span class="navbar-rds" aria-label="RD Station CRM">
@@ -118,7 +146,7 @@
 <div id="checkout-root" hidden></div>
 <div id="overlay-root"></div>
 <script>
-const USERS=new Set(['0e1733efb669979a709f05ba0a8d2725095193cf81fd05b75b7cefe5c48e03f9','d919a100ce6b45524d415d52d088d5817587c6dd8c3691b03b8063c44d043523','a3418631ddce958c2fe2206cb362d390c2cc59c86b6ef2083b3d7cbe38e9140d','047007876c105127d9e0299df5dcea30b9fa5fae71be6f9d10ddb6357981cb9c','ccc68482d9e0eee0789e64c7674421076738f8836857ea89bcd0afb832bf3fc3','80c0fcbbfa9d03d861b22230e67c380afb545c12de43094f3985128625858361','3db6c5da02e8275b4cd5d64d91d628b51e0028c3c8a915570492c34ab9e1fdd1','33129567e0bd787efb15a26307e5311e06ba66e3b8dbc2206ad59f99780a4d78']);
+const USERS=new Set(['0e1733efb669979a709f05ba0a8d2725095193cf81fd05b75b7cefe5c48e03f9','d919a100ce6b45524d415d52d088d5817587c6dd8c3691b03b8063c44d043523','a3418631ddce958c2fe2206cb362d390c2cc59c86b6ef2083b3d7cbe38e9140d','047007876c105127d9e0299df5dcea30b9fa5fae71be6f9d10ddb6357981cb9c','ccc68482d9e0eee0789e64c7674421076738f8836857ea89bcd0afb832bf3fc3','80c0fcbbfa9d03d861b22230e67c380afb545c12de43094f3985128625858361','3db6c5da02e8275b4cd5d64d91d628b51e0028c3c8a915570492c34ab9e1fdd1','33129567e0bd787efb15a26307e5311e06ba66e3b8dbc2206ad59f99780a4d78','ef9d5711a95ddcc209cf8d01664f22d88289cacef4deb6921618b067e0a79c2c','24d4b96f58da6d4a8512313bbd02a28ebf0ca95dec6e4c86ef78ce7f01e788ac']);
 const PASS='e9e69fcd703e857da732ae1e8c0d839920a24cb3407cc98440c04a4c7b62545d';
 function normUser(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu,'')}
 async function sha256(s){
@@ -188,6 +216,12 @@ async function unlock(){
     const style=document.createElement('style');
     style.textContent=payload.css;
     document.head.appendChild(style);
+    const root=document.getElementById('crm-root');
+    const loginNav=document.getElementById('login-nav');
+    const crmNav=document.getElementById('crm-nav');
+    if(root) root.classList.remove('is-login');
+    if(loginNav) loginNav.hidden=true;
+    if(crmNav) crmNav.hidden=false;
     new Function(payload.js)();
   }catch(err){
     state.busy=false;
