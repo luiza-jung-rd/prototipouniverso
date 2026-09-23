@@ -146,21 +146,37 @@
 <div id="checkout-root" hidden></div>
 <div id="overlay-root"></div>
 <script>
-const USERS=new Set(['0e1733efb669979a709f05ba0a8d2725095193cf81fd05b75b7cefe5c48e03f9','d919a100ce6b45524d415d52d088d5817587c6dd8c3691b03b8063c44d043523','a3418631ddce958c2fe2206cb362d390c2cc59c86b6ef2083b3d7cbe38e9140d','047007876c105127d9e0299df5dcea30b9fa5fae71be6f9d10ddb6357981cb9c','ccc68482d9e0eee0789e64c7674421076738f8836857ea89bcd0afb832bf3fc3','80c0fcbbfa9d03d861b22230e67c380afb545c12de43094f3985128625858361','3db6c5da02e8275b4cd5d64d91d628b51e0028c3c8a915570492c34ab9e1fdd1','33129567e0bd787efb15a26307e5311e06ba66e3b8dbc2206ad59f99780a4d78','ef9d5711a95ddcc209cf8d01664f22d88289cacef4deb6921618b067e0a79c2c','24d4b96f58da6d4a8512313bbd02a28ebf0ca95dec6e4c86ef78ce7f01e788ac']);
+const USERS=new Set(['0e1733efb669979a709f05ba0a8d2725095193cf81fd05b75b7cefe5c48e03f9','d919a100ce6b45524d415d52d088d5817587c6dd8c3691b03b8063c44d043523','a3418631ddce958c2fe2206cb362d390c2cc59c86b6ef2083b3d7cbe38e9140d','047007876c105127d9e0299df5dcea30b9fa5fae71be6f9d10ddb6357981cb9c','ccc68482d9e0eee0789e64c7674421076738f8836857ea89bcd0afb832bf3fc3','80c0fcbbfa9d03d861b22230e67c380afb545c12de43094f3985128625858361','3db6c5da02e8275b4cd5d64d91d628b51e0028c3c8a915570492c34ab9e1fdd1','33129567e0bd787efb15a26307e5311e06ba66e3b8dbc2206ad59f99780a4d78','24d4b96f58da6d4a8512313bbd02a28ebf0ca95dec6e4c86ef78ce7f01e788ac']);
 const PASS='e9e69fcd703e857da732ae1e8c0d839920a24cb3407cc98440c04a4c7b62545d';
+const PILOTO='ef9d5711a95ddcc209cf8d01664f22d88289cacef4deb6921618b067e0a79c2c';
+const PILOTO_PASS='de88907737a1a1671b15d17b7a727b577e11ff1b2de9cdad0edfc6562086ce8f';
 function normUser(v){return (v||'').trim().toLowerCase().normalize('NFD').replace(/\p{M}/gu,'')}
 async function sha256(s){
   const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
   return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-async function decrypt(buf,password){
-  const bytes=new Uint8Array(buf);
+async function decryptSlice(bytes,password){
   const salt=bytes.slice(0,16);
   const iv=bytes.slice(16,28);
   const data=bytes.slice(28);
   const material=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
   const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:120000,hash:'SHA-256'},material,{name:'AES-GCM',length:256},false,['decrypt']);
   return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,data));
+}
+async function decrypt(buf,password){
+  const bytes=new Uint8Array(buf);
+  if(bytes[0]===80&&bytes[1]===68&&bytes[2]===50){
+    const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+    let off=4;
+    let last;
+    while(off+4<=bytes.length){
+      const len=view.getUint32(off); off+=4;
+      const slice=bytes.slice(off,off+len); off+=len;
+      try{return await decryptSlice(slice,password)}catch(err){last=err}
+    }
+    throw last||new Error('decrypt');
+  }
+  return decryptSlice(bytes,password);
 }
 const state={user:'',pass:'',product:'',error:'',busy:false};
 function loginView(){
@@ -202,7 +218,8 @@ async function unlock(){
   if(!(state.user.trim()&&state.pass&&state.product)||state.busy) return;
   const uh=await sha256(normUser(state.user));
   const ph=await sha256('pd-ai|'+state.pass);
-  if(!USERS.has(uh)||ph!==PASS){state.error='Usuário ou senha inválidos';renderLogin();return}
+  const ok=uh===PILOTO?ph===PILOTO_PASS:(USERS.has(uh)&&ph===PASS);
+  if(!ok){state.error='Usuário ou senha inválidos';renderLogin();return}
   state.busy=true;state.error='';renderLogin();
   try{sessionStorage.setItem('pd-ai-auth',PASS)}catch(e){}
   if(state.product==='totvs'){
