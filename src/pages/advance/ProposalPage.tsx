@@ -29,7 +29,7 @@ export function ProposalPage() {
     if (routeState?.view === 'closed') return null
     if (routeState?.view === 'form') return 'form'
     if (routeState?.view === 'share' || (link && link.status !== 'cancelled')) return 'share'
-    return 'form'
+    return null
   })
   const [dialog, setDialog] = useState<Dialog>(routeState?.view === 'share' ? (routeState.dialog ?? null) : null)
 
