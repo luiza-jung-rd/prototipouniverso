@@ -29,6 +29,24 @@ function AdvanceLayout() {
 
 export default function App() {
   const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/'
+  const advanceOnly = import.meta.env.VITE_ADVANCE_ONLY === 'true'
+
+  if (advanceOnly) {
+    return (
+      <BrowserRouter basename={basename}>
+        <Routes>
+          <Route element={<AdvanceLayout />}>
+            <Route path="/" element={<ProposalPage />} />
+            <Route path="/proposta" element={<ProposalPage />} />
+            <Route path="/whatsapp" element={<WhatsAppPage />} />
+            <Route path="/email" element={<EmailPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    )
+  }
 
   return (
     <StoreProvider>
