@@ -1,4 +1,4 @@
-export const PAYMENT_URL = 'https://link.malga.io/8e93099f-182a-4a00-affb-7e0d3f28c705'
+export const PAYMENT_URL = 'https://totvspay.com/l/8e93099f-182a-4a00-affb-7e0d3f28c705'
 export const CREATED_LABEL = '16/09/2026 às 12:48'
 export const DEFAULT_DUE = '23/09/2026'
 export const DEFAULT_AMOUNT = 1000

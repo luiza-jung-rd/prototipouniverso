@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 import '../../advance/advance.css'
-import { emailBody } from '../../advance/model'
+import { PAYMENT_URL, emailBody } from '../../advance/model'
 import { useAdvance } from '../../advance/store'
 import { FlowNav } from './FlowNav'
 
 export function EmailPage() {
   const { link } = useAdvance()
-  const url = link?.url ?? 'https://link.malga.io/8e93099f-182a-4a00-affb-7e0d3f28c705'
+  const url = link?.url ?? PAYMENT_URL
   const body = emailBody(url)
   const [before, after] = body.split(url)
 

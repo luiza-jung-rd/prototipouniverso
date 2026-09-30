@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
 import '../../advance/advance.css'
-import { WHATSAPP_PHONE, whatsappMessage } from '../../advance/model'
+import { PAYMENT_URL, WHATSAPP_PHONE, whatsappMessage } from '../../advance/model'
 import { useAdvance } from '../../advance/store'
 import { FlowNav } from './FlowNav'
 
 export function WhatsAppPage() {
   const navigate = useNavigate()
   const { link } = useAdvance()
-  const url = link?.url ?? 'https://link.malga.io/8e93099f-182a-4a00-affb-7e0d3f28c705'
+  const url = link?.url ?? PAYMENT_URL
   const message = whatsappMessage(url)
   const [before, after] = message.split(url)
 
