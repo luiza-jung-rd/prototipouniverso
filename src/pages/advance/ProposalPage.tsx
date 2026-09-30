@@ -4,18 +4,21 @@ import '../../advance/advance.css'
 import {
   DEFAULT_AMOUNT,
   ENTRY_COMPONENTS,
-  PAYMENT_SCHEDULE,
-  PROPOSAL,
-  PROPOSAL_CLIENT,
   formatDue,
 } from '../../advance/model'
-import totvsLogo from '../../assets/totvs-logo.svg'
 import { useAdvance, type AdvanceLink } from '../../advance/store'
 import { formatBRL } from '../../data/mock'
 import { FlowNav } from './FlowNav'
 
 type Dialog = 'whatsapp' | 'cancel' | null
 type Modal = 'form' | 'share' | null
+
+const SCHEDULE = [
+  { name: 'Sinal', qty: 1, due: '10/10/2024', installment: 500, percent: '0,3', total: 500 },
+  { name: 'Mensal', qty: 36, due: '10/11/2024', installment: 1666.67, percent: '80', total: 60000 },
+  { name: 'Conclusão', qty: 1, due: '10/11/2024', installment: 500, percent: '0,5', total: 500 },
+  { name: 'Anual', qty: 2, due: '10/11/2024', installment: 15000, percent: '30', total: 30000 },
+]
 
 export function ProposalPage() {
   const navigate = useNavigate()
@@ -27,7 +30,6 @@ export function ProposalPage() {
   const [due, setDue] = useState('2026-09-23')
   const [expiryMode, setExpiryMode] = useState('vencimento')
   const [componentId, setComponentId] = useState('')
-  const [step, setStep] = useState<'pagamento' | 'resumo'>('pagamento')
   const routeState = location.state as { view?: Modal | 'closed'; dialog?: Dialog } | null
   const [modal, setModal] = useState<Modal>(() => {
     if (routeState?.view === 'closed') return null
@@ -103,14 +105,12 @@ export function ProposalPage() {
   return (
     <div className={`advance-root${modal || dialog ? ' is-locked' : ''}`}>
       <header className="erp-top">
-        <span className="erp-brand">
-          <img src={totvsLogo} alt="TOTVS" />
-          <span>Portal de Imóveis</span>
-        </span>
+        <span className="erp-brand">Portal de Imóveis</span>
         <nav className="erp-nav" aria-label="Módulos">
           <span>Dashboard</span>
           <span>Pré-Venda</span>
           <span>Empreendimentos</span>
+          <span>Aluguel</span>
           <span className="is-here">Propostas</span>
           <span>Contratos</span>
           <span>Corretores</span>
@@ -118,227 +118,84 @@ export function ProposalPage() {
           <span>Agendamentos</span>
         </nav>
         <div className="erp-tools">
-          <span className="erp-tool" aria-hidden>
-            <BellIcon />
-          </span>
-          <span className="erp-tool" aria-hidden>
-            ?
-          </span>
-          <span className="erp-avatar">P</span>
+          <button className="erp-head-btn" type="button">
+            ‹ Voltar
+          </button>
+          <button className="erp-head-btn" type="button">
+            Próximo ›
+          </button>
         </div>
       </header>
 
       <main className="erp-page">
-        <div className="erp-title-row">
-          <h1>Dados do Empreendimento</h1>
-          <span className="erp-badge">EM PROPOSTA</span>
-        </div>
-        <section className="erp-facts">
-          <div>
-            <small>Empreendimento</small>
-            <strong>{PROPOSAL.enterprise}</strong>
-          </div>
-          <div>
-            <small>Bloco</small>
-            <strong>{PROPOSAL.block}</strong>
-          </div>
-          <div>
-            <small>Unidade</small>
-            <strong>{PROPOSAL.unit}</strong>
-          </div>
-          <div>
-            <small>Vagas</small>
-            <strong>{PROPOSAL.spots}</strong>
-          </div>
-          <div>
-            <small>Entrega</small>
-            <strong>{PROPOSAL.delivery}</strong>
-          </div>
-          <div>
-            <small>Área</small>
-            <strong>{PROPOSAL.area}</strong>
-          </div>
-          <div>
-            <small>Data proposta</small>
-            <input className="erp-readonly" readOnly value={PROPOSAL.proposalDate} />
-          </div>
-          <div>
-            <small>Valor tabela</small>
-            <strong>{money(PROPOSAL.tableValue)}</strong>
-          </div>
-          <div>
-            <small>Valor da Proposta (R$)</small>
-            <strong>{money(PROPOSAL.proposalValue)}</strong>
-          </div>
-          <div>
-            <small>Desconto (R$)</small>
-            <strong>-</strong>
-          </div>
-          <div>
-            <small>Acréscimo (R$)</small>
-            <strong>-</strong>
-          </div>
-        </section>
-
-        <div className="erp-proposal-head">
-          <h2>Preencher Proposta - ({PROPOSAL.number})</h2>
-          <div className="erp-step-actions">
-            <button className="erp-nav-btn" type="button" onClick={() => setStep('pagamento')} disabled={step === 'pagamento'}>
-              ‹ Voltar
-            </button>
-            {step === 'resumo' ? (
-              <button className="erp-nav-btn erp-nav-btn-solid" type="button">
-                Finalizar
-              </button>
-            ) : (
-              <button className="erp-nav-btn" type="button" onClick={() => setStep('resumo')}>
-                Próximo ›
-              </button>
-            )}
-          </div>
-        </div>
-
         <ol className="erp-stepper">
-          {['Dados Iniciais', 'Cliente', 'Condições de pagamento', 'Resumo da proposta'].map((label, index) => {
-            const active = step === 'resumo' ? index === 3 : index === 2
-            return (
-              <li key={label} className={active ? 'is-active' : index < (step === 'resumo' ? 3 : 2) ? 'is-done' : ''}>
-                <span />
-                {label}
-              </li>
-            )
-          })}
+          <li>Dados Iniciais</li>
+          <li>Cliente</li>
+          <li className="is-active">Condições de pagamento</li>
+          <li>Resumo da proposta</li>
         </ol>
 
-        {step === 'pagamento' ? (
-          <>
-            <div className="erp-toolbar">
-              <button className="is-on" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
-                Adiantamento
-              </button>
-              <button type="button">Comissão</button>
-              <button type="button">% Desconto</button>
-              <button type="button">Restaurar tabela</button>
-              <button type="button">Validar</button>
-              <button type="button">Plano de pagamento</button>
-            </div>
-            <label className="erp-field">
-              <span>Modalidade</span>
-              <select defaultValue={PROPOSAL.modality}>
-                <option>{PROPOSAL.modality}</option>
-              </select>
-            </label>
-            <p className="erp-table-name">{PROPOSAL.table}</p>
-            <div className="erp-table-actions">
-              <button type="button">+ Componentes Disponíveis</button>
-              <button type="button">Excluir Componentes</button>
-            </div>
-            <div className="erp-table-wrap">
-              <table className="erp-table">
-                <thead>
-                  <tr>
-                    <th />
-                    <th>Componente</th>
-                    <th>Quantidade</th>
-                    <th>Vencimento</th>
-                    <th>Valor Parcela</th>
-                    <th>C</th>
-                    <th>Desconto Comissão</th>
-                    <th>%</th>
-                    <th>Valor Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PAYMENT_SCHEDULE.map((item) => (
-                    <tr key={item.name}>
-                      <td className="erp-check">✓</td>
-                      <td>{item.name}</td>
-                      <td>{item.qty}</td>
-                      <td>{item.due}</td>
-                      <td>{formatBRL(item.installment)}</td>
-                      <td><input type="checkbox" disabled /></td>
-                      <td>0,00</td>
-                      <td>{item.percent}</td>
-                      <td>{formatBRL(item.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="erp-totals">
-              Adiantamento: R$ 0,00 · Percentual Total: 100,00% · Valor Total: {formatBRL(PROPOSAL.proposalValue)} · Desconto Comissão: R$ 0,00 · Saldo Devedor: {formatBRL(PROPOSAL.proposalValue)}
-            </p>
-          </>
-        ) : (
-          <>
-            <h3 className="erp-block-title">Marketing</h3>
-            <section className="erp-facts erp-facts-2">
-              <div>
-                <small>Mídia</small>
-                <strong>{PROPOSAL_CLIENT.media}</strong>
-              </div>
-              <div>
-                <small>Motivo da Compra</small>
-                <strong>{PROPOSAL_CLIENT.reason}</strong>
-              </div>
-            </section>
-            <h3 className="erp-block-title">Cliente</h3>
-            <div className="erp-table-wrap">
-              <table className="erp-table">
-                <thead>
-                  <tr>
-                    <th>Nome</th>
-                    <th>Documento</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Celular</th>
-                    <th>Correspondente</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{PROPOSAL_CLIENT.name}</td>
-                    <td>{PROPOSAL_CLIENT.document}</td>
-                    <td>{PROPOSAL_CLIENT.email}</td>
-                    <td>{PROPOSAL_CLIENT.phone}</td>
-                    <td>{PROPOSAL_CLIENT.mobile}</td>
-                    <td />
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <h3 className="erp-block-title">Condições de Pagamento</h3>
-            <div className="erp-table-wrap">
-              <table className="erp-table">
-                <thead>
-                  <tr>
-                    <th>Componentes</th>
-                    <th>Quantidade</th>
-                    <th>Vencimento</th>
-                    <th>Valor unitário</th>
-                    <th>%</th>
-                    <th>Valor total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {PAYMENT_SCHEDULE.map((item) => (
-                    <tr key={item.name}>
-                      <td>{item.name}</td>
-                      <td>{item.qty}</td>
-                      <td>{item.due}</td>
-                      <td>{formatBRL(item.installment)}</td>
-                      <td>{item.percent}</td>
-                      <td>{formatBRL(item.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
+        <div className="erp-toolbar">
+          <button className="is-on" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
+            Adiantamento
+          </button>
+          <button type="button">Comissão</button>
+          <button type="button">% Desconto</button>
+          <button type="button">Restaurar tabela</button>
+          <button type="button">Validar</button>
+          <button type="button">Plano de pagamento</button>
+          <button type="button">Gráfico comparativo</button>
+        </div>
+
+        <label className="erp-field">
+          <span>Modalidade</span>
+          <select defaultValue="Modalidade Padrão Reajuste Mensal">
+            <option>Modalidade Padrão Reajuste Mensal</option>
+          </select>
+        </label>
+        <p className="erp-table-name">Tabela Padrão</p>
+        <div className="erp-table-actions">
+          <button type="button">+ Componentes Disponíveis</button>
+        </div>
+        <div className="erp-table-wrap">
+          <table className="erp-table">
+            <thead>
+              <tr>
+                <th />
+                <th>Componente</th>
+                <th>Quantidade</th>
+                <th>Vencimento</th>
+                <th>Valor Parcela</th>
+                <th>C</th>
+                <th>Desconto Comissão</th>
+                <th>%</th>
+                <th>Valor Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SCHEDULE.map((item) => (
+                <tr key={item.name}>
+                  <td className="erp-check">✓</td>
+                  <td>{item.name}</td>
+                  <td>{item.qty}</td>
+                  <td>{item.due}</td>
+                  <td>{formatBRL(item.installment)}</td>
+                  <td><input type="checkbox" disabled /></td>
+                  <td>0,00</td>
+                  <td>{item.percent}</td>
+                  <td>{formatBRL(item.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="erp-totals">
+          Adiantamento: R$ 0,00 · Percentual Total: 100,00% · Valor Total: R$ 100.000,00 · Desconto Comissão: R$ 0,00 · Saldo Devedor: R$ 100.000,00
+        </p>
       </main>
       <footer className="erp-foot">
         <strong>TOTVS</strong>
+        <span>Portal de Imóveis 12.1.2402</span>
         <span>Sobre</span>
       </footer>
 
@@ -711,15 +568,3 @@ function RefreshIcon() {
   )
 }
 
-function money(value: number) {
-  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-}
-
-function BellIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <path d="M8 2.5a3.5 3.5 0 0 0-3.5 3.5v2L3 10.5h10L11.5 8V6A3.5 3.5 0 0 0 8 2.5Z" fill="none" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M6.8 12.2a1.2 1.2 0 0 0 2.4 0" fill="none" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  )
-}

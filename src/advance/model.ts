@@ -5,34 +5,18 @@ export const DEFAULT_AMOUNT = 1000
 export const WHATSAPP_PHONE = '+55 31 98642-0749'
 
 export const PROPOSAL = {
-  number: '259',
-  enterprise: 'EDIFÍCIO ALPES SC',
-  block: 'Torre C',
-  unit: 'unidade 000410',
-  area: '80 m²',
-  delivery: '31/01/2025',
-  proposalDate: '27/08/2025',
-  tableValue: 280000,
-  proposalValue: 280000,
+  number: '23',
+  enterprise: 'Shopping Run Fast',
+  block: 'VAG.B',
+  unit: 'Apto 000008',
+  area: '150 m²',
+  delivery: '01/01/2099',
+  proposalDate: '14/09/2026',
+  tableValue: 440,
+  proposalValue: 939.18,
   spots: 0,
-  modality: 'Modalidade Padrão',
+  modality: 'Modalidade Prima Run',
   table: 'Tabela Padrão',
-}
-
-export const PAYMENT_SCHEDULE = [
-  { name: 'Sinal', qty: 3, due: '27/08/2025', installment: 18666.67, percent: 20, total: 56000 },
-  { name: 'Mensal', qty: 90, due: '27/09/2025', installment: 2177.78, percent: 70, total: 196000 },
-  { name: 'Parcela Única', qty: 4, due: '27/09/2025', installment: 7000, percent: 10, total: 28000 },
-]
-
-export const PROPOSAL_CLIENT = {
-  media: 'Instagram',
-  reason: 'Investimento',
-  name: 'Rita Rubelo',
-  document: '812.653.610-10',
-  email: 'leandrobelzani@hotmail.com',
-  phone: '+55 (31) 9902-6166',
-  mobile: '+55 (31) 9947-54515',
 }
 
 export const ENTRY_COMPONENTS = [
