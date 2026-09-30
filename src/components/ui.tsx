@@ -69,10 +69,12 @@ export function Tooltip({
 
 export function Modal({
   title,
+  kicker,
   children,
   onClose,
 }: {
   title: string
+  kicker?: string
   children: ReactNode
   onClose: () => void
 }) {
@@ -82,6 +84,7 @@ export function Modal({
         <button className="modal-close" onClick={onClose} aria-label="Fechar">
           ×
         </button>
+        {kicker ? <p className="modal-kicker">{kicker}</p> : null}
         <h2>{title}</h2>
         {children}
       </div>

@@ -2,7 +2,7 @@ export type PersonType = 'pj' | 'pf' | ''
 
 export type LinkStatus = 'ativo' | 'inativo'
 export type LinkType = 'unico' | 'reutilizavel'
-export type PaymentStatus = 'pago' | 'aguardando' | 'cancelado' | 'rejeitado'
+export type PaymentStatus = 'pago' | 'aguardando' | 'cancelado' | 'rejeitado' | 'estornado'
 export type PaymentMethod = 'pix' | 'cartao' | 'boleto'
 
 export type LinkItem = {
@@ -55,131 +55,125 @@ export const BANKS = [
 ]
 
 export const MONTHLY_VOLUME = [
-  { month: 'Jan', value: 4100 },
-  { month: 'Fev', value: 1200 },
-  { month: 'Mar', value: 1100 },
-  { month: 'Abr', value: 500 },
-  { month: 'Mai', value: 3100 },
-  { month: 'Jun', value: 80 },
+  { month: 'Abr', value: 79483.48 },
+  { month: 'Mai', value: 196334.69 },
+  { month: 'Jun', value: 142696.24 },
+  { month: 'Jul', value: 282059.23 },
+  { month: 'Ago', value: 106942.74 },
+  { month: 'Set', value: 305621.76 },
 ]
 
+export const METHOD_SALES = [
+  { label: 'Vendas no cartão de crédito', value: 224968.54, pct: '22,8%' },
+  { label: 'Vendas no boleto', value: 332082.33, pct: '33,7%' },
+  { label: 'Vendas no pix', value: 230289.74, pct: '23,4%' },
+]
+
+export const METHOD_APPROVAL = [
+  { label: 'Cartão de crédito', count: 512, pct: '80,8%', width: '80.8%', color: '#0ED869' },
+  { label: 'Boleto', count: 2654, pct: '75,0%', width: '75%', color: '#81F0D8' },
+  { label: 'Pix', count: 4056, pct: '63,9%', width: '63.9%', color: '#00DBFF' },
+]
+
+export const METHOD_APPROVAL_LEGEND = [
+  { label: 'Pix', color: '#00DBFF' },
+  { label: 'Cartão de crédito', color: '#0ED869' },
+  { label: 'Boleto', color: '#81F0D8' },
+]
+
+export const METHOD_APPROVAL_TOTAL = '91,0%'
+
 export const REFUSAL_REASONS = [
-  { label: 'Saldo insufic.', value: 4750 },
-  { label: 'Cartão bloquea.', value: 2000 },
-  { label: 'Dados inváli.', value: 1200 },
-  { label: 'Limite excedi.', value: 500 },
-  { label: 'Link expirad.', value: 3050 },
-  { label: 'Pag. recusado', value: 80 },
+  { label: 'Erro de autenticação', short: 'Erro de a…', value: 68 },
+  { label: 'Erro de autenticação sem desafio', short: 'Erro de a…', value: 31 },
+  { label: 'Cartão bloqueado', short: 'Cartão bl…', value: 51 },
+  { label: 'Cartão cancelado', short: 'Cartão ca…', value: 61 },
+  { label: 'O cartão não aceita este tipo de compra', short: 'O cartão …', value: 61 },
+  { label: 'Motivo da recusa indisponível', short: 'Motivo da…', value: 69 },
+]
+
+export const CHARGEBACK_SERIES = [
+  { month: 'Abr', confirmed: 1128, refunds: 115 },
+  { month: 'Mai', confirmed: 687, refunds: 90 },
+  { month: 'Jun', confirmed: 1093, refunds: 136 },
+  { month: 'Jul', confirmed: 1034, refunds: 121 },
+  { month: 'Ago', confirmed: 1168, refunds: 141 },
+  { month: 'Set', confirmed: 799, refunds: 51 },
+]
+
+export const CHARGEBACK_Y_MAX = 2000
+export const CHARGEBACK_Y_TICKS = [
+  { value: 2000, label: '2mil' },
+  { value: 1600, label: '1,6mil' },
+  { value: 1200, label: '1,2mil' },
+  { value: 800, label: '800' },
+  { value: 400, label: '400' },
+  { value: 0, label: '0' },
 ]
 
 export const OPERATIONS = [
-  { id: 'F434F4', created: '10/06/2025', method: 'cartao', original: 430, current: 430, status: 'pago', unit: 'Colégio Anglo Osasco' },
-  { id: 'R43RF42F', created: '02/06/2025', method: 'pix', original: 5000, current: 5000, status: 'pago', unit: 'Colégio Anglo Alphaville' },
-  { id: 'R43R4FF3', created: '02/06/2025', method: 'cartao', original: 1090, current: 1090, status: 'aguardando', unit: 'Colégio Anglo Zona leste' },
-  { id: '8R923RUUR', created: '27/05/2025', method: 'boleto', original: 730, current: 730, status: 'cancelado', unit: 'Colégio Anglo Carapicuiba' },
-  { id: 'F34R4FHGH', created: '22/05/2025', method: 'cartao', original: 70, current: 70, status: 'rejeitado', unit: 'Colégio Anglo Zona leste' },
-  { id: '4R4FT4FW', created: '19/05/2025', method: 'pix', original: 309, current: 309, status: 'pago', unit: 'Colégio Anglo Barueri' },
+  { id: '50f8e1da-1369-714f-b73c-7678d3e80148', created: '26/05/2026', method: 'cartao', original: 2090.51, current: 1530.02, status: 'pago', unit: '—' },
+  { id: '23f02a71-5939-733c-aad5-72ff2630e519', created: '23/04/2026', method: 'pix', original: 2134.88, current: 1589.3, status: 'rejeitado', unit: '—' },
+  { id: 'ba399483-0952-7939-b0a7-85b2ca16d4ac', created: '11/05/2026', method: 'boleto', original: 3807.02, current: 1937.07, status: 'cancelado', unit: '—' },
+  { id: '4fd9d374-4d5a-7443-961d-6f4317555c4b', created: '11/06/2026', method: 'boleto', original: 1862.58, current: 1311.5, status: 'estornado', unit: '—' },
+  { id: 'f875cb91-f7b5-7ad8-9a6c-248e346d1c79', created: '26/08/2026', method: 'cartao', original: 2924.33, current: 1690.14, status: 'pago', unit: '—' },
+  { id: '2215bcaa-3975-72b1-b474-89d7d08833de', created: '27/09/2026', method: 'pix', original: 3808.38, current: 1929.7, status: 'rejeitado', unit: '—' },
+  { id: 'f2f2d623-19c5-76f8-ac95-d4e967783c24', created: '25/07/2026', method: 'boleto', original: 1643.55, current: 984.94, status: 'cancelado', unit: '—' },
 ] as const
 
-function paymentsFor(seed: Payment[]): Payment[] {
-  return seed
+function linkOf(
+  id: string,
+  name: string,
+  createdAt: string,
+  dueAt: string,
+  unitPrice: number,
+): PaymentLink {
+  return {
+    id,
+    name,
+    description: name,
+    status: 'ativo',
+    createdAt,
+    dueAt,
+    type: 'unico',
+    url: `https://totvspay-staging.rdstation.com/l/${id}`,
+    items: [{ id: `i-${id}`, name, description: '', unitPrice, quantity: 1 }],
+    payments: [],
+    methods: { credit: true, pix: true, boleto: true },
+    installments: '1x',
+  }
 }
 
 export const INITIAL_LINKS: PaymentLink[] = [
-  {
-    id: '1',
-    name: 'Abril – EF – Turma B Noturno',
-    description: 'Link de pagamento para a turma de Abril',
-    status: 'ativo',
-    createdAt: '29/03/2026',
-    dueAt: '29/03/2026',
-    type: 'unico',
-    url: 'https://link.malga.io/a6c52e88-df46-4e86-9472-2b8623509afc',
-    items: [{ id: 'i1', name: 'Ensino fundamental', description: 'Cobrança mensal do ano letivo', unitPrice: 3000, quantity: 1 }],
-    payments: paymentsFor([{ id: 'p1', contact: 'Poliana Pessoa', date: '28/04/2026', status: 'pago', method: 'pix' }]),
-    methods: { credit: true, pix: true, boleto: true },
-    installments: '1x',
-  },
-  {
-    id: '2',
-    name: 'Abril – EF – Turma B Matutino',
-    description: 'Mensalidade abril matutino',
-    status: 'inativo',
-    createdAt: '29/03/2026',
-    dueAt: '29/03/2026',
-    type: 'reutilizavel',
-    url: 'https://totvspay.com/l/abril-ef-matutino',
-    items: [{ id: 'i2', name: 'Ensino fundamental', description: 'Cobrança mensal do ano letivo', unitPrice: 4000, quantity: 1 }],
-    payments: [
-      { id: 'p2', contact: 'Poliana Pessoa', date: '28/04/2026', status: 'pago', method: 'pix' },
-      { id: 'p3', contact: 'Guilherme Martins', date: '25/04/2026', status: 'pago', method: 'cartao' },
-    ],
-    methods: { credit: true, pix: true, boleto: false },
-    installments: '1x',
-  },
-  {
-    id: '3',
-    name: 'Abril – EM – Turma B Noturno',
-    description: 'Ensino médio noturno',
-    status: 'inativo',
-    createdAt: '29/03/2026',
-    dueAt: '29/03/2026',
-    type: 'reutilizavel',
-    url: 'https://totvspay.com/l/abril-em-noturno',
-    items: [{ id: 'i3', name: 'Ensino médio', description: 'Cobrança mensal', unitPrice: 5000, quantity: 1 }],
-    payments: [],
-    methods: { credit: true, pix: true, boleto: true },
-    installments: '1x',
-  },
-  {
-    id: '4',
-    name: 'Abril – EM – Turma B Matutino',
-    description: 'Ensino médio matutino',
-    status: 'inativo',
-    createdAt: '29/03/2026',
-    dueAt: '29/03/2026',
-    type: 'reutilizavel',
-    url: 'https://totvspay.com/l/abril-em-matutino',
-    items: [{ id: 'i4', name: 'Ensino médio', description: 'Cobrança mensal', unitPrice: 6000, quantity: 1 }],
-    payments: [{ id: 'p4', contact: 'Bruno Matos', date: '-', status: 'aguardando', method: 'pix' }],
-    methods: { credit: true, pix: true, boleto: true },
-    installments: '1x',
-  },
-  {
-    id: '5',
-    name: 'Março – EM – Turma A Noturno',
-    description: 'Turma A noturno',
-    status: 'inativo',
-    createdAt: '27/02/2026',
-    dueAt: '27/02/2026',
-    type: 'unico',
-    url: 'https://totvspay.com/l/marco-em-noturno',
-    items: [{ id: 'i5', name: 'Ensino médio', description: 'Cobrança mensal', unitPrice: 5000, quantity: 1 }],
-    payments: Array.from({ length: 6 }, (_, i) => ({
-      id: `p5-${i}`,
-      contact: ['Poliana Pessoa', 'Guilherme Martins', 'Bruno Matos', 'Beatriz Victoria', 'Rodolfo Spalenza', 'Vandi Alves'][i],
-      date: ['28/04/2026', '25/04/2026', '-', '-', '-', '13/04/2026'][i],
-      status: (['pago', 'pago', 'aguardando', 'cancelado', 'rejeitado', 'pago'] as PaymentStatus[])[i],
-      method: (['pix', 'cartao', 'pix', 'boleto', 'cartao', 'boleto'] as PaymentMethod[])[i],
-    })),
-    methods: { credit: true, pix: true, boleto: true },
-    installments: '1x',
-  },
-  {
-    id: '6',
-    name: 'Março – EM – Turma A Matutino',
-    description: 'Turma A matutino',
-    status: 'inativo',
-    createdAt: '27/02/2026',
-    dueAt: '27/02/2026',
-    type: 'reutilizavel',
-    url: 'https://totvspay.com/l/marco-em-matutino',
-    items: [{ id: 'i6', name: 'Ensino médio', description: 'Cobrança mensal', unitPrice: 6000, quantity: 1 }],
-    payments: [],
-    methods: { credit: true, pix: true, boleto: true },
-    installments: '1x',
-  },
+  linkOf('1', 'Spalenza 02', '28/09/2026', '13/10/2026', 100),
+  linkOf('2', 'Spalenza 01', '28/09/2026', '13/10/2026', 100),
+  linkOf('3', 'Pós Literatura 2027', '23/09/2026', '25/09/2026', 1000),
+  linkOf('4', 'Direito 2027.1', '23/09/2026', '01/10/2026', 1000),
+  linkOf('5', 'Medicina 2027', '23/09/2026', '24/10/2026', 5000),
+  linkOf('6', 'Teste 4', '18/09/2026', '19/09/2026', 100),
 ]
+
+export function parseBrDate(value: string | null) {
+  if (!value) return null
+  const [day, month, year] = value.split('/').map(Number)
+  if (!day || !month || !year) return null
+  return new Date(year, month - 1, day)
+}
+
+export function isLinkExpired(link: PaymentLink) {
+  const due = parseBrDate(link.dueAt)
+  if (!due) return false
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  return due < today
+}
+
+export function compactBRL(value: number) {
+  if (value >= 1000) {
+    return `R$ ${Math.round(value / 1000).toLocaleString('pt-BR')} mil`
+  }
+  return formatBRL(value)
+}
 
 export function formatBRL(value: number) {
   return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -221,6 +215,7 @@ export function paymentStatusLabel(status: PaymentStatus) {
     aguardando: 'Aguardando pagamento',
     cancelado: 'Cancelado',
     rejeitado: 'Rejeitado',
+    estornado: 'Estornado',
   }[status]
 }
 
@@ -230,6 +225,7 @@ export function paymentStatusClass(status: PaymentStatus) {
     aguardando: 'badge-warning',
     cancelado: 'badge-neutral',
     rejeitado: 'badge-danger',
+    estornado: 'badge-warning',
   }[status]
 }
 

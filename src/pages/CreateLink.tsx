@@ -306,47 +306,63 @@ export function CreateLinkPage() {
       ) : null}
 
       {shareOpen && created ? (
-        <Modal title="Use seu link em suas estratégias" onClose={() => navigate(`/links/${created.id}`)}>
-          <p>Sua cobrança foi criada</p>
+        <Modal
+          kicker="Sua cobrança foi criada"
+          title="Use seu link em suas estratégias"
+          onClose={() => navigate(`/links/${created.id}`)}
+        >
           <div className="share-url">
             <input className="control" readOnly value={created.url} />
-            <Button
-              variant="ghost"
+            <button
+              className="share-copy"
               type="button"
+              aria-label="Copiar"
               onClick={() => {
                 void navigator.clipboard?.writeText(created.url)
                 notify('Link copiado')
               }}
             >
-              Copiar
-            </Button>
+              <CopyIcon />
+            </button>
           </div>
-          <button
-            className="share-row"
-            type="button"
-            onClick={() => {
-              window.open(`mailto:?subject=${encodeURIComponent(created.name)}&body=${encodeURIComponent(created.url)}`)
-            }}
-          >
-            <div>
-              <strong>E-mail</strong>
-              <div style={{ fontSize: 12, color: '#405466' }}>Encaminhar por email</div>
-            </div>
-            ✈️
-          </button>
-          <button
-            className="share-row"
-            type="button"
-            onClick={() => {
-              window.open(`https://wa.me/?text=${encodeURIComponent(`${created.name} ${created.url}`)}`)
-            }}
-          >
-            <div>
-              <strong>WhatsApp</strong>
-              <div style={{ fontSize: 12, color: '#405466' }}>Encaminhar por whatsapp</div>
-            </div>
-            ✈️
-          </button>
+          <div className="share-list">
+            <button
+              className="share-row"
+              type="button"
+              onClick={() => {
+                window.open(`mailto:?subject=${encodeURIComponent(created.name)}&body=${encodeURIComponent(created.url)}`)
+              }}
+            >
+              <span className="share-brand" aria-hidden>
+                <MailIcon />
+              </span>
+              <span className="share-copy-text">
+                <strong>E-mail</strong>
+                <small>Encaminhar por email</small>
+              </span>
+              <span className="share-send" aria-hidden>
+                <SendIcon />
+              </span>
+            </button>
+            <button
+              className="share-row"
+              type="button"
+              onClick={() => {
+                window.open(`https://wa.me/?text=${encodeURIComponent(`${created.name} ${created.url}`)}`)
+              }}
+            >
+              <span className="share-brand" aria-hidden>
+                <WhatsAppIcon />
+              </span>
+              <span className="share-copy-text">
+                <strong>WhatsApp</strong>
+                <small>Encaminhar por whatsapp</small>
+              </span>
+              <span className="share-send" aria-hidden>
+                <SendIcon />
+              </span>
+            </button>
+          </div>
           <div className="form-actions">
             <Button type="button" onClick={() => navigate(`/links/${created.id}`)}>
               Ver link criado
