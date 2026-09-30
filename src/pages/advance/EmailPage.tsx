@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import '../../advance/advance.css'
-import { PAYMENT_URL, emailBody } from '../../advance/model'
+import { PAYMENT_URL, PROPOSAL, emailBody } from '../../advance/model'
 import { useAdvance } from '../../advance/store'
 import { FlowNav } from './FlowNav'
 
@@ -15,7 +15,7 @@ export function EmailPage() {
       <div className="mail-page">
         <article className="mail-sheet">
           <div className="mail-subject">
-            <h1>Link adiantamento Prop/Reserva 23</h1>
+            <h1>Link adiantamento Prop/Reserva {PROPOSAL.number}</h1>
             <span className="mail-chip">Caixa de entrada</span>
           </div>
           <div className="mail-meta">

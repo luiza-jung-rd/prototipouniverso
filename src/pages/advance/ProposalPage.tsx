@@ -4,9 +4,12 @@ import '../../advance/advance.css'
 import {
   DEFAULT_AMOUNT,
   ENTRY_COMPONENTS,
+  PAYMENT_SCHEDULE,
   PROPOSAL,
+  PROPOSAL_CLIENT,
   formatDue,
 } from '../../advance/model'
+import totvsLogo from '../../assets/totvs-logo.svg'
 import { useAdvance, type AdvanceLink } from '../../advance/store'
 import { formatBRL } from '../../data/mock'
 import { FlowNav } from './FlowNav'
@@ -24,6 +27,7 @@ export function ProposalPage() {
   const [due, setDue] = useState('2026-09-23')
   const [expiryMode, setExpiryMode] = useState('vencimento')
   const [componentId, setComponentId] = useState('')
+  const [step, setStep] = useState<'pagamento' | 'resumo'>('pagamento')
   const routeState = location.state as { view?: Modal | 'closed'; dialog?: Dialog } | null
   const [modal, setModal] = useState<Modal>(() => {
     if (routeState?.view === 'closed') return null
@@ -99,8 +103,9 @@ export function ProposalPage() {
   return (
     <div className={`advance-root${modal || dialog ? ' is-locked' : ''}`}>
       <header className="erp-top">
-        <span className="erp-mark" aria-hidden>
-          <BuildingIcon />
+        <span className="erp-brand">
+          <img src={totvsLogo} alt="TOTVS" />
+          <span>Portal de Imóveis</span>
         </span>
         <nav className="erp-nav" aria-label="Módulos">
           <span>Dashboard</span>
@@ -116,6 +121,9 @@ export function ProposalPage() {
           <span className="erp-tool" aria-hidden>
             <BellIcon />
           </span>
+          <span className="erp-tool" aria-hidden>
+            ?
+          </span>
           <span className="erp-avatar">P</span>
         </div>
       </header>
@@ -123,7 +131,7 @@ export function ProposalPage() {
       <main className="erp-page">
         <div className="erp-title-row">
           <h1>Dados do Empreendimento</h1>
-          <span className="erp-badge">Em proposta</span>
+          <span className="erp-badge">EM PROPOSTA</span>
         </div>
         <section className="erp-facts">
           <div>
@@ -152,91 +160,187 @@ export function ProposalPage() {
           </div>
           <div>
             <small>Data proposta</small>
-            <strong>{PROPOSAL.proposalDate}</strong>
+            <input className="erp-readonly" readOnly value={PROPOSAL.proposalDate} />
           </div>
           <div>
             <small>Valor tabela</small>
-            <strong>{PROPOSAL.tableValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
-          </div>
-          <div>
-            <small>Desconto (R$)</small>
-            <strong>—</strong>
-          </div>
-          <div>
-            <small>Acréscimo (R$)</small>
-            <strong>—</strong>
+            <strong>{money(PROPOSAL.tableValue)}</strong>
           </div>
           <div>
             <small>Valor da Proposta (R$)</small>
-            <strong>{PROPOSAL.proposalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+            <strong>{money(PROPOSAL.proposalValue)}</strong>
+          </div>
+          <div>
+            <small>Desconto (R$)</small>
+            <strong>-</strong>
+          </div>
+          <div>
+            <small>Acréscimo (R$)</small>
+            <strong>-</strong>
           </div>
         </section>
 
         <div className="erp-proposal-head">
           <h2>Preencher Proposta - ({PROPOSAL.number})</h2>
-          <div className="erp-side">
-            <div>
-              <button className="adv-btn adv-btn-secondary" type="button" onClick={() => setModal(link ? 'share' : 'form')}>
-                {link?.status === 'waiting' ? 'Ver link' : 'Adiantamento'}
+          <div className="erp-step-actions">
+            <button className="erp-nav-btn" type="button" onClick={() => setStep('pagamento')} disabled={step === 'pagamento'}>
+              ‹ Voltar
+            </button>
+            {step === 'resumo' ? (
+              <button className="erp-nav-btn erp-nav-btn-solid" type="button">
+                Finalizar
               </button>
-            </div>
-            <div className="erp-side-links">
-              <span>Resumo da proposta</span>
-              <span>Gráfico comparativo</span>
-            </div>
+            ) : (
+              <button className="erp-nav-btn" type="button" onClick={() => setStep('resumo')}>
+                Próximo ›
+              </button>
+            )}
           </div>
         </div>
-        <div className="erp-tabs">
-          <button type="button">Dados iniciais</button>
-          <button type="button" className="active">
-            Adiantamento
-          </button>
-          <button type="button">Contrato</button>
-        </div>
-        <div className="erp-inline">
-          <span>{PROPOSAL.modality}</span>
-          <span>{PROPOSAL.table}</span>
-        </div>
 
-        <article className="erp-card">
-          <h3>Adiantamento</h3>
-          <p>
-            {link?.status === 'waiting'
-              ? `Link aguardando pagamento de ${formatBRL(link.amount)}, com expiração em ${link.dueLabel}.`
-              : link?.status === 'paid'
-                ? `Adiantamento de ${formatBRL(link.amount)} pago no checkout.`
-                : link?.status === 'cancelled'
-                  ? 'O link de pagamento foi cancelado. Gere uma nova cobrança para enviar outro link.'
-                  : 'Gere um link para o comprador pagar o adiantamento desta proposta.'}
-          </p>
-          <button className="adv-btn adv-btn-primary" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
-            {link && link.status !== 'cancelled' ? 'Abrir link de pagamento' : 'Gerar link de pagamento'}
-          </button>
-        </article>
+        <ol className="erp-stepper">
+          {['Dados Iniciais', 'Cliente', 'Condições de pagamento', 'Resumo da proposta'].map((label, index) => {
+            const active = step === 'resumo' ? index === 3 : index === 2
+            return (
+              <li key={label} className={active ? 'is-active' : index < (step === 'resumo' ? 3 : 2) ? 'is-done' : ''}>
+                <span />
+                {label}
+              </li>
+            )
+          })}
+        </ol>
 
-        <table className="erp-table">
-          <thead>
-            <tr>
-              <th>Componente</th>
-              <th>Quant.</th>
-              <th>Vencimento</th>
-              <th>Valor parcela</th>
-              <th>Valor total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ENTRY_COMPONENTS.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>1</td>
-                <td>{PROPOSAL.proposalDate}</td>
-                <td>{formatBRL(item.balance)}</td>
-                <td>{formatBRL(item.balance)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {step === 'pagamento' ? (
+          <>
+            <div className="erp-toolbar">
+              <button className="is-on" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
+                Adiantamento
+              </button>
+              <button type="button">Comissão</button>
+              <button type="button">% Desconto</button>
+              <button type="button">Restaurar tabela</button>
+              <button type="button">Validar</button>
+              <button type="button">Plano de pagamento</button>
+            </div>
+            <label className="erp-field">
+              <span>Modalidade</span>
+              <select defaultValue={PROPOSAL.modality}>
+                <option>{PROPOSAL.modality}</option>
+              </select>
+            </label>
+            <p className="erp-table-name">{PROPOSAL.table}</p>
+            <div className="erp-table-actions">
+              <button type="button">+ Componentes Disponíveis</button>
+              <button type="button">Excluir Componentes</button>
+            </div>
+            <div className="erp-table-wrap">
+              <table className="erp-table">
+                <thead>
+                  <tr>
+                    <th />
+                    <th>Componente</th>
+                    <th>Quantidade</th>
+                    <th>Vencimento</th>
+                    <th>Valor Parcela</th>
+                    <th>C</th>
+                    <th>Desconto Comissão</th>
+                    <th>%</th>
+                    <th>Valor Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PAYMENT_SCHEDULE.map((item) => (
+                    <tr key={item.name}>
+                      <td className="erp-check">✓</td>
+                      <td>{item.name}</td>
+                      <td>{item.qty}</td>
+                      <td>{item.due}</td>
+                      <td>{formatBRL(item.installment)}</td>
+                      <td><input type="checkbox" disabled /></td>
+                      <td>0,00</td>
+                      <td>{item.percent}</td>
+                      <td>{formatBRL(item.total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="erp-totals">
+              Adiantamento: R$ 0,00 · Percentual Total: 100,00% · Valor Total: {formatBRL(PROPOSAL.proposalValue)} · Desconto Comissão: R$ 0,00 · Saldo Devedor: {formatBRL(PROPOSAL.proposalValue)}
+            </p>
+          </>
+        ) : (
+          <>
+            <h3 className="erp-block-title">Marketing</h3>
+            <section className="erp-facts erp-facts-2">
+              <div>
+                <small>Mídia</small>
+                <strong>{PROPOSAL_CLIENT.media}</strong>
+              </div>
+              <div>
+                <small>Motivo da Compra</small>
+                <strong>{PROPOSAL_CLIENT.reason}</strong>
+              </div>
+            </section>
+            <h3 className="erp-block-title">Cliente</h3>
+            <div className="erp-table-wrap">
+              <table className="erp-table">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Documento</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Celular</th>
+                    <th>Correspondente</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{PROPOSAL_CLIENT.name}</td>
+                    <td>{PROPOSAL_CLIENT.document}</td>
+                    <td>{PROPOSAL_CLIENT.email}</td>
+                    <td>{PROPOSAL_CLIENT.phone}</td>
+                    <td>{PROPOSAL_CLIENT.mobile}</td>
+                    <td />
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 className="erp-block-title">Condições de Pagamento</h3>
+            <div className="erp-table-wrap">
+              <table className="erp-table">
+                <thead>
+                  <tr>
+                    <th>Componentes</th>
+                    <th>Quantidade</th>
+                    <th>Vencimento</th>
+                    <th>Valor unitário</th>
+                    <th>%</th>
+                    <th>Valor total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PAYMENT_SCHEDULE.map((item) => (
+                    <tr key={item.name}>
+                      <td>{item.name}</td>
+                      <td>{item.qty}</td>
+                      <td>{item.due}</td>
+                      <td>{formatBRL(item.installment)}</td>
+                      <td>{item.percent}</td>
+                      <td>{formatBRL(item.total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </main>
+      <footer className="erp-foot">
+        <strong>TOTVS</strong>
+        <span>Sobre</span>
+      </footer>
 
       {modal === 'form' ? (
         <div className="adv-overlay">
@@ -607,13 +711,8 @@ function RefreshIcon() {
   )
 }
 
-function BuildingIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <path d="M3 13.5V3.5L8 2l5 1.5v10" fill="none" stroke="#fff" strokeWidth="1.3" />
-      <path d="M6 13.5v-3h4v3M6 6.5h1M9 6.5h1M6 8.5h1M9 8.5h1" stroke="#fff" strokeWidth="1.2" />
-    </svg>
-  )
+function money(value: number) {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
 }
 
 function BellIcon() {
