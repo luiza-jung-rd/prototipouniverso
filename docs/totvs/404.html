@@ -8,8 +8,20 @@
     <script>
       (function () {
         var KEY = 'pd-ai-auth'
+        var PASS_KEY = 'pd-ai-pass'
         var PASS = 'e9e69fcd703e857da732ae1e8c0d839920a24cb3407cc98440c04a4c7b62545d'
+        function isReload() {
+          try {
+            var nav = performance.getEntriesByType('navigation')[0]
+            if (nav) return nav.type === 'reload'
+          } catch (e) {}
+          return performance.navigation && performance.navigation.type === 1
+        }
         try {
+          if (isReload()) {
+            sessionStorage.removeItem(KEY)
+            sessionStorage.removeItem(PASS_KEY)
+          }
           if (sessionStorage.getItem(KEY) !== PASS) {
             location.replace('/prototipouniverso/')
             return
