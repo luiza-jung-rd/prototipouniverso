@@ -54,25 +54,42 @@ export const BANKS = [
   '260 — Nubank',
 ]
 
+export const DASHBOARD_KPI = {
+  totalValue: 68609.46,
+  totalCount: 1082,
+  authorizedValue: 29830.2,
+  authorizedCount: 489,
+  authorizedPct: '43,5%',
+  refusedValue: 38779.26,
+  refusedCount: 593,
+  refusedPct: '56,5%',
+  refundValue: 22372.64,
+  refundCount: 353,
+  refundPct: '32,6%',
+  cancelValue: 33310.39,
+  cancelCount: 526,
+  cancelPct: '48,6%',
+}
+
 export const MONTHLY_VOLUME = [
-  { month: 'Abr', value: 79483.48 },
-  { month: 'Mai', value: 196334.69 },
-  { month: 'Jun', value: 142696.24 },
-  { month: 'Jul', value: 282059.23 },
-  { month: 'Ago', value: 106942.74 },
-  { month: 'Set', value: 305621.76 },
+  { month: 'Abr', value: 2130.02 },
+  { month: 'Mai', value: 5261.43 },
+  { month: 'Jun', value: 3824.02 },
+  { month: 'Jul', value: 7558.71 },
+  { month: 'Ago', value: 2865.88 },
+  { month: 'Set', value: 8190.14 },
 ]
 
 export const METHOD_SALES = [
-  { label: 'Vendas no cartão de crédito', value: 224968.54, pct: '22,8%' },
-  { label: 'Vendas no boleto', value: 332082.33, pct: '33,7%' },
-  { label: 'Vendas no pix', value: 230289.74, pct: '23,4%' },
+  { label: 'Vendas no cartão de crédito', value: 8523.45, pct: '28,6%' },
+  { label: 'Vendas no boleto', value: 12581.7, pct: '42,2%' },
+  { label: 'Vendas no pix', value: 8725.05, pct: '29,2%' },
 ]
 
 export const METHOD_APPROVAL = [
-  { label: 'Cartão de crédito', count: 512, pct: '80,8%', width: '80.8%', color: '#0ED869' },
-  { label: 'Boleto', count: 2654, pct: '75,0%', width: '75%', color: '#81F0D8' },
-  { label: 'Pix', count: 4056, pct: '63,9%', width: '63.9%', color: '#00DBFF' },
+  { label: 'Cartão de crédito', count: 190, pct: '61,5%', width: '61.5%', color: '#0ED869' },
+  { label: 'Boleto', count: 200, pct: '43,9%', width: '43.9%', color: '#81F0D8' },
+  { label: 'Pix', count: 99, pct: '31,2%', width: '31.2%', color: '#00DBFF' },
 ]
 
 export const METHOD_APPROVAL_LEGEND = [
@@ -81,33 +98,33 @@ export const METHOD_APPROVAL_LEGEND = [
   { label: 'Boleto', color: '#81F0D8' },
 ]
 
-export const METHOD_APPROVAL_TOTAL = '91,0%'
+export const METHOD_APPROVAL_TOTAL = '45,2%'
 
 export const REFUSAL_REASONS = [
-  { label: 'Erro de autenticação', short: 'Erro de a…', value: 68 },
-  { label: 'Erro de autenticação sem desafio', short: 'Erro de a…', value: 31 },
-  { label: 'Cartão bloqueado', short: 'Cartão bl…', value: 51 },
-  { label: 'Cartão cancelado', short: 'Cartão ca…', value: 61 },
-  { label: 'O cartão não aceita este tipo de compra', short: 'O cartão …', value: 61 },
-  { label: 'Motivo da recusa indisponível', short: 'Motivo da…', value: 69 },
+  { label: 'Erro de autenticação', short: 'Erro de a…', value: 118 },
+  { label: 'Erro de autenticação sem desafio', short: 'Erro de a…', value: 54 },
+  { label: 'Cartão bloqueado', short: 'Cartão bl…', value: 89 },
+  { label: 'Cartão cancelado', short: 'Cartão ca…', value: 106 },
+  { label: 'O cartão não aceita este tipo de compra', short: 'O cartão …', value: 106 },
+  { label: 'Motivo da recusa indisponível', short: 'Motivo da…', value: 120 },
 ]
 
 export const CHARGEBACK_SERIES = [
-  { month: 'Abr', confirmed: 1128, refunds: 115 },
-  { month: 'Mai', confirmed: 687, refunds: 90 },
-  { month: 'Jun', confirmed: 1093, refunds: 136 },
-  { month: 'Jul', confirmed: 1034, refunds: 121 },
-  { month: 'Ago', confirmed: 1168, refunds: 141 },
-  { month: 'Set', confirmed: 799, refunds: 51 },
+  { month: 'Abr', confirmed: 93, refunds: 62 },
+  { month: 'Mai', confirmed: 57, refunds: 49 },
+  { month: 'Jun', confirmed: 90, refunds: 73 },
+  { month: 'Jul', confirmed: 86, refunds: 65 },
+  { month: 'Ago', confirmed: 97, refunds: 76 },
+  { month: 'Set', confirmed: 66, refunds: 28 },
 ]
 
-export const CHARGEBACK_Y_MAX = 2000
+export const CHARGEBACK_Y_MAX = 100
 export const CHARGEBACK_Y_TICKS = [
-  { value: 2000, label: '2mil' },
-  { value: 1600, label: '1,6mil' },
-  { value: 1200, label: '1,2mil' },
-  { value: 800, label: '800' },
-  { value: 400, label: '400' },
+  { value: 100, label: '100' },
+  { value: 80, label: '80' },
+  { value: 60, label: '60' },
+  { value: 40, label: '40' },
+  { value: 20, label: '20' },
   { value: 0, label: '0' },
 ]
 

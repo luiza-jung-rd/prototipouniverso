@@ -6,6 +6,7 @@ import {
   CHARGEBACK_SERIES,
   CHARGEBACK_Y_MAX,
   CHARGEBACK_Y_TICKS,
+  DASHBOARD_KPI,
   METHOD_APPROVAL,
   METHOD_APPROVAL_LEGEND,
   METHOD_APPROVAL_TOTAL,
@@ -222,21 +223,33 @@ export function DashboardPage() {
                 <div className="kpi-icon kpi-icon-cyan">
                   <MoneyIcon />
                 </div>
-                <DataBlock label="Total de cobrança" value={formatBRL(68609.46)} helper="1.082 cobranças" />
+                <DataBlock
+                  label="Total de cobrança"
+                  value={formatBRL(DASHBOARD_KPI.totalValue)}
+                  helper={`${DASHBOARD_KPI.totalCount.toLocaleString('pt-BR')} cobranças`}
+                />
               </article>
               <article className="card kpi">
                 <div className="kpi-icon kpi-icon-success">
                   <CheckIcon />
                 </div>
-                <DataBlock label="Cobranças autorizadas" value={formatBRL(29830.2)} helper="489 cobranças" />
-                <span className="data-block-trend">15,0%</span>
+                <DataBlock
+                  label="Cobranças autorizadas"
+                  value={formatBRL(DASHBOARD_KPI.authorizedValue)}
+                  helper={`${DASHBOARD_KPI.authorizedCount.toLocaleString('pt-BR')} cobranças`}
+                />
+                <span className="data-block-trend">{DASHBOARD_KPI.authorizedPct}</span>
               </article>
               <article className="card kpi">
                 <div className="kpi-icon kpi-icon-danger">
                   <CloseIcon />
                 </div>
-                <DataBlock label="Cobranças recusadas" value={formatBRL(38779.26)} helper="593 cobranças" />
-                <span className="data-block-trend">19,5%</span>
+                <DataBlock
+                  label="Cobranças recusadas"
+                  value={formatBRL(DASHBOARD_KPI.refusedValue)}
+                  helper={`${DASHBOARD_KPI.refusedCount.toLocaleString('pt-BR')} cobranças`}
+                />
+                <span className="data-block-trend">{DASHBOARD_KPI.refusedPct}</span>
               </article>
             </div>
 
@@ -338,21 +351,33 @@ export function DashboardPage() {
                 <div className="kpi-icon kpi-icon-cyan">
                   <MoneyIcon />
                 </div>
-                <DataBlock label="Total de cobrança" value={formatBRL(68609.46)} helper="1.082 cobranças" />
+                <DataBlock
+                  label="Total de cobrança"
+                  value={formatBRL(DASHBOARD_KPI.totalValue)}
+                  helper={`${DASHBOARD_KPI.totalCount.toLocaleString('pt-BR')} cobranças`}
+                />
               </article>
               <article className="card kpi">
                 <div className="kpi-icon kpi-icon-warning">
                   <PauseIcon />
                 </div>
-                <DataBlock label="Estorno" value={formatBRL(22372.64)} helper="997 em disputa" />
-                <span className="data-block-trend">32,6%</span>
+                <DataBlock
+                  label="Estorno"
+                  value={formatBRL(DASHBOARD_KPI.refundValue)}
+                  helper={`${DASHBOARD_KPI.refundCount.toLocaleString('pt-BR')} em disputa`}
+                />
+                <span className="data-block-trend">{DASHBOARD_KPI.refundPct}</span>
               </article>
               <article className="card kpi">
                 <div className="kpi-icon kpi-icon-danger">
                   <UndoIcon />
                 </div>
-                <DataBlock label="Cancelamento" value={formatBRL(33310.39)} helper="446 devolvidos" />
-                <span className="data-block-trend">48,6%</span>
+                <DataBlock
+                  label="Cancelamento"
+                  value={formatBRL(DASHBOARD_KPI.cancelValue)}
+                  helper={`${DASHBOARD_KPI.cancelCount.toLocaleString('pt-BR')} devolvidos`}
+                />
+                <span className="data-block-trend">{DASHBOARD_KPI.cancelPct}</span>
               </article>
             </div>
             <article className="card" style={{ marginBottom: 16 }}>
