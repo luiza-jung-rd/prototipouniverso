@@ -18,6 +18,40 @@
   font-family: inherit;
 }
 
+.erp-print-wrap {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px 80px;
+  background: #e7eef3;
+}
+
+.erp-print {
+  position: relative;
+  width: min(1100px, 100%);
+}
+
+.erp-print img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.erp-print-hit {
+  position: absolute;
+  left: 2.04%;
+  top: 27.88%;
+  width: 12.86%;
+  height: 4.13%;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+}
+
 .erp-top {
   height: 48px;
   background: #1a6cb5;

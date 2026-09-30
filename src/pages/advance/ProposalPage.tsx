@@ -13,12 +13,6 @@ import { FlowNav } from './FlowNav'
 type Dialog = 'whatsapp' | 'cancel' | null
 type Modal = 'form' | 'share' | null
 
-const SCHEDULE = [
-  { name: 'Sinal', qty: 1, due: '10/10/2024', installment: 500, percent: '0,3', total: 500 },
-  { name: 'Mensal', qty: 36, due: '10/11/2024', installment: 1666.67, percent: '80', total: 60000 },
-  { name: 'Conclusão', qty: 1, due: '10/11/2024', installment: 500, percent: '0,5', total: 500 },
-  { name: 'Anual', qty: 2, due: '10/11/2024', installment: 15000, percent: '30', total: 30000 },
-]
 
 export function ProposalPage() {
   const navigate = useNavigate()
@@ -104,100 +98,18 @@ export function ProposalPage() {
 
   return (
     <div className={`advance-root${modal || dialog ? ' is-locked' : ''}`}>
-      <header className="erp-top">
-        <span className="erp-brand">Portal de Imóveis</span>
-        <nav className="erp-nav" aria-label="Módulos">
-          <span>Dashboard</span>
-          <span>Pré-Venda</span>
-          <span>Empreendimentos</span>
-          <span>Aluguel</span>
-          <span className="is-here">Propostas</span>
-          <span>Contratos</span>
-          <span>Corretores</span>
-          <span>Gerencial</span>
-          <span>Agendamentos</span>
-        </nav>
-        <div className="erp-tools">
-          <button className="erp-head-btn" type="button">
-            ‹ Voltar
-          </button>
-          <button className="erp-head-btn" type="button">
-            Próximo ›
-          </button>
-        </div>
-      </header>
-
-      <main className="erp-page">
-        <ol className="erp-stepper">
-          <li>Dados Iniciais</li>
-          <li>Cliente</li>
-          <li className="is-active">Condições de pagamento</li>
-          <li>Resumo da proposta</li>
-        </ol>
-
-        <div className="erp-toolbar">
-          <button className="is-on" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
+      <main className="erp-print-wrap">
+        <div className="erp-print">
+          <img src={`${import.meta.env.BASE_URL}proposta-print.png`} alt="Portal de Imóveis na etapa Condições de pagamento" />
+          <button
+            className="erp-print-hit"
+            type="button"
+            onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}
+          >
             Adiantamento
           </button>
-          <button type="button">Comissão</button>
-          <button type="button">% Desconto</button>
-          <button type="button">Restaurar tabela</button>
-          <button type="button">Validar</button>
-          <button type="button">Plano de pagamento</button>
-          <button type="button">Gráfico comparativo</button>
         </div>
-
-        <label className="erp-field">
-          <span>Modalidade</span>
-          <select defaultValue="Modalidade Padrão Reajuste Mensal">
-            <option>Modalidade Padrão Reajuste Mensal</option>
-          </select>
-        </label>
-        <p className="erp-table-name">Tabela Padrão</p>
-        <div className="erp-table-actions">
-          <button type="button">+ Componentes Disponíveis</button>
-        </div>
-        <div className="erp-table-wrap">
-          <table className="erp-table">
-            <thead>
-              <tr>
-                <th />
-                <th>Componente</th>
-                <th>Quantidade</th>
-                <th>Vencimento</th>
-                <th>Valor Parcela</th>
-                <th>C</th>
-                <th>Desconto Comissão</th>
-                <th>%</th>
-                <th>Valor Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SCHEDULE.map((item) => (
-                <tr key={item.name}>
-                  <td className="erp-check">✓</td>
-                  <td>{item.name}</td>
-                  <td>{item.qty}</td>
-                  <td>{item.due}</td>
-                  <td>{formatBRL(item.installment)}</td>
-                  <td><input type="checkbox" disabled /></td>
-                  <td>0,00</td>
-                  <td>{item.percent}</td>
-                  <td>{formatBRL(item.total)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="erp-totals">
-          Adiantamento: R$ 0,00 · Percentual Total: 100,00% · Valor Total: R$ 100.000,00 · Desconto Comissão: R$ 0,00 · Saldo Devedor: R$ 100.000,00
-        </p>
       </main>
-      <footer className="erp-foot">
-        <strong>TOTVS</strong>
-        <span>Portal de Imóveis 12.1.2402</span>
-        <span>Sobre</span>
-      </footer>
 
       {modal === 'form' ? (
         <div className="adv-overlay">
