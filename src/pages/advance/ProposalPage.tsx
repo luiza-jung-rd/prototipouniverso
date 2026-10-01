@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import '../../advance/advance.css'
+import qrDemo from '../../assets/advance/qr-demo.svg'
 import {
-  DEFAULT_AMOUNT,
   ENTRY_COMPONENTS,
   formatDue,
+  PROPOSAL,
 } from '../../advance/model'
 import { useAdvance, type AdvanceLink } from '../../advance/store'
 import { formatBRL } from '../../data/mock'
@@ -14,21 +15,27 @@ type Dialog = 'whatsapp' | 'cancel' | null
 type Modal = 'form' | 'share' | null
 
 const ROWS = [
-  { name: 'Sinal', qty: '1', due: '10/10/2024', installment: '9.500,00', discount: '0,00', percent: '9,5', total: '9.500,00' },
-  { name: 'Mensal', qty: '36', due: '10/11/2024', installment: '1.666,67', discount: '0,00', percent: '60', total: '60.000,00' },
-  { name: 'Conclusão', qty: '1', due: '10/11/2024', installment: '500,00', discount: '0,00', percent: '0,5', total: '500,00' },
-  { name: 'Anual', qty: '2', due: '10/11/2024', installment: '15.000,00', discount: '0,00', percent: '30', total: '30.000,00' },
+  { name: 'Ato', qty: '1', due: '05/05/2025', amount: '300,00', percent: '5,00', commission: '700,00', checked: true, grayQty: true },
+  { name: 'Entrada 02', qty: '1', due: '05/05/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: true, grayQty: true },
+  { name: 'Entrada 03', qty: '1', due: '05/05/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: true, grayQty: true },
+  { name: 'Mensal', qty: '1', due: '05/06/2025', amount: '4.600,00', percent: '23,00', commission: '0,00', checked: true, grayQty: false },
+  { name: 'Intermediaria', qty: '1', due: '05/06/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: false, grayQty: false },
+  { name: 'Bimestral', qty: '1', due: '05/06/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: false, grayQty: false },
+  { name: 'Trimestral', qty: '1', due: '05/06/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: false, grayQty: false },
+  { name: 'FB', qty: '1', due: '05/06/2025', amount: '13.000,00', percent: '65,00', commission: '0,00', checked: false, grayQty: false },
+  { name: 'Semestral', qty: '1', due: '05/06/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: false, grayQty: false },
+  { name: 'Anual', qty: '1', due: '05/06/2025', amount: '200,00', percent: '1,00', commission: '0,00', checked: false, grayQty: false },
 ]
 
 
 export function ProposalPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { link, generate, cancel } = useAdvance()
+  const { link, generate, cancel, reset } = useAdvance()
   const [toast, setToast] = useState('')
-  const [attentionOpen, setAttentionOpen] = useState(false)
-  const [cents, setCents] = useState(DEFAULT_AMOUNT * 100)
-  const [due, setDue] = useState('2026-09-23')
+  const [tableOpen, setTableOpen] = useState(true)
+  const [cents, setCents] = useState(0)
+  const [due, setDue] = useState('2026-10-07')
   const [expiryMode, setExpiryMode] = useState('vencimento')
   const [componentId, setComponentId] = useState('')
   const routeState = location.state as { view?: Modal | 'closed'; dialog?: Dialog } | null
@@ -96,161 +103,219 @@ export function ProposalPage() {
   }
 
   function applyComponent() {
-    if (!componentId) {
+    const item = ENTRY_COMPONENTS.find((entry) => entry.id === componentId)
+    if (!item || !link) {
       setToast('Selecione um componente de entrada')
       return
     }
-    setToast('Saldo insuficiente para abater o adiantamento')
+    if (link.amount > item.balance) {
+      setToast('Saldo insuficiente para abater o adiantamento')
+      return
+    }
+    setToast(`Adiantamento aplicado em ${item.name}. Demonstração concluída.`)
   }
 
+  function demo() {
+    setToast('Para demonstrar o fluxo, clique em Adiantamento.')
+  }
+
+  function restart() {
+    reset()
+    setModal(null)
+    setDialog(null)
+    setCents(0)
+    setDue('2026-10-07')
+    setComponentId('')
+    setTableOpen(true)
+    setToast('Demonstração reiniciada.')
+  }
+
+  const advanceLabel = link && link.status !== 'cancelled' ? formatBRL(link.amount) : '-'
+
   return (
-    <div className={`advance-root${modal || dialog ? ' is-locked' : ''}`}>
-      <div className="pi">
-        <header className="pi-top">
-          <span className="pi-logo">
-            Portal de
-            <br />
-            Imóveis
-          </span>
-          <nav className="pi-nav" aria-label="Módulos">
-            <span>Dashboard</span>
-            <span>Pré-Venda</span>
-            <span>Empreendimentos</span>
-            <span>Aluguel</span>
-            <span>Propostas</span>
-            <span>Contratos</span>
-            <span>Corretores</span>
-            <span>Gerencial</span>
-            <span>Agendamentos</span>
+    <div className={`advance-root evt-root${modal || dialog ? ' is-locked' : ''}`}>
+      <div className="evt">
+        <header className="evt-top">
+          <b className="evt-brand">TOTVS</b>
+          <nav className="evt-nav" aria-label="Módulos">
+            <b>Pré-Venda</b>
+            <b>Empreendimentos</b>
+            <b>Propostas</b>
+            <b>Contratos</b>
           </nav>
-          <div className="pi-tools">
-            <span className="pi-bell" aria-hidden>
-              <BellGlyph />
-            </span>
-            <span className="pi-tool" aria-hidden>
-              <GridGlyph />
-            </span>
-            <span className="pi-user" aria-hidden>
-              <UserGlyph />
-            </span>
+          <div className="evt-head-icons">
+            <LineIcon d="m15 2 7 7-5 2-4 5-3-3-7 8 6-9-3-3 5-2z" />
+            <LineIcon d="M5 5h.1M12 5h.1M19 5h.1M5 12h.1M12 12h.1M19 12h.1M5 19h.1M12 19h.1M19 19h.1" />
+            <LineIcon d="M19 14a8 8 0 1 0-14 2l-2 5 6-2a8 8 0 0 0 10-5zM8 8h7m-7 4h4" />
+            <span className="evt-avatar">M</span>
           </div>
         </header>
-
-        <main className="pi-body">
-          <div className="pi-step-row">
-            <ol className="pi-stepper">
-              <li>Dados Iniciais</li>
-              <li>Cliente</li>
-              <li className="is-active">Condições de pagamento</li>
-              <li>Resumo da proposta</li>
-            </ol>
-            <div className="pi-step-actions">
-              <button type="button">‹ Voltar</button>
-              <button type="button">Próximo ›</button>
-            </div>
-          </div>
-
-          <div className="pi-toolbar">
-            <button className="is-on" type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>
-              <MoneyGlyph /> Adiantamento
-            </button>
-            <button type="button">
-              <CoinGlyph /> Comissão
-            </button>
-            <button type="button">
-              <PercentGlyph /> Desconto
-            </button>
-            <button type="button">
-              <RestoreGlyph /> Restaurar tabela
-            </button>
-            <button type="button">
-              <CheckGlyph /> Validar
-            </button>
-            <button type="button">
-              <CalGlyph /> Plano de pagamento
-            </button>
-            <button type="button">
-              <ChartGlyph /> Gráfico comparativo
-            </button>
-          </div>
-
-          <label className="pi-field">
-            <span>Modalidade</span>
-            <select defaultValue="Modalidade Padrão Reajuste Mensal">
-              <option>Modalidade Padrão Reajuste Mensal</option>
-            </select>
-          </label>
-          <label className="pi-field">
-            <span>Tabela Padrão</span>
-            <select defaultValue="Tabela Padrão">
-              <option>Tabela Padrão</option>
-            </select>
-          </label>
-
-          <button className="pi-add" type="button">
-            + Componentes Disponíveis
+        <aside className="evt-side" aria-label="Atalhos">
+          <span><LineIcon d="M3 18v-4a9 9 0 0 1 15-7M6 17v-3a6 6 0 0 1 9-5M3 18h18v-7M9 17 21 5" /></span>
+          <span><PeopleIcon /></span>
+          <span><LineIcon d="M3 21h19M5 21V8l9-5v18m0-12h6v12M8 9v2m3-3v2m-3 4v2m3-3v2m-3 4v2m8-8v2m0 2v2" /></span>
+          <span><DocIcon /></span>
+          <span><DocIcon /></span>
+          <span><PeopleIcon /></span>
+          <span><GearIcon /></span>
+          <span><LineIcon d="M4 5h16v16H4zM4 10h16M8 3v5m8-5v5M8 14h2m4 0h2m-8 3h2" /></span>
+          <button className="evt-reset" type="button" title="Reiniciar demonstração" aria-label="Reiniciar demonstração" onClick={restart}>
+            ⊙
           </button>
-
-          <div className="pi-table-wrap">
-            <table className="pi-table">
-              <thead>
-                <tr>
-                  <th>Sta.</th>
-                  <th>Componente</th>
-                  <th>Quantidade</th>
-                  <th>Vencimento</th>
-                  <th>Valor Parcela</th>
-                  <th>C</th>
-                  <th>Desconto Comissão</th>
-                  <th>%</th>
-                  <th>Valor Total</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {ROWS.map((row) => (
-                  <tr key={row.name}>
-                    <td className="pi-ok">✓</td>
-                    <td><input readOnly value={row.name} /></td>
-                    <td><input readOnly value={row.qty} /></td>
-                    <td><input readOnly value={row.due} /></td>
-                    <td>
-                      <span className="pi-money">
-                        <span className="pi-cal" aria-hidden><CalGlyph /></span>
-                        <input readOnly value={row.installment} />
-                        <InfoGlyph />
-                      </span>
-                    </td>
-                    <td><input type="checkbox" disabled /></td>
-                    <td>
-                      <span className="pi-money">
-                        <input readOnly value={row.discount} />
-                        <InfoGlyph />
-                      </span>
-                    </td>
-                    <td><input readOnly value={row.percent} /></td>
-                    <td>
-                      <span className="pi-money">
-                        <input readOnly value={row.total} />
-                        <InfoGlyph />
-                      </span>
-                    </td>
-                    <td className="pi-more">•••</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        </aside>
+        <main className="evt-main">
+          <section className="evt-enterprise">
+            <h3>
+              Dados do Empreendimento <span className="evt-badge">EM PREPARAÇÃO</span>
+            </h3>
+            <div className="evt-details">
+              <div>
+                <label>Empreendimento</label>
+                <p>{PROPOSAL.enterprise}</p>
+                <label>Entrega</label>
+                <p>{PROPOSAL.delivery}</p>
+              </div>
+              <div>
+                <label>Bloco</label>
+                <p>{PROPOSAL.block}</p>
+                <label>Área</label>
+                <p>{PROPOSAL.area}</p>
+              </div>
+              <div>
+                <label>Unidade</label>
+                <p>{PROPOSAL.unit}</p>
+                <label>Data proposta</label>
+                <p className="evt-date">
+                  {PROPOSAL.proposalDate} <span><LineIcon d="M4 5h16v16H4zM4 10h16M8 3v5m8-5v5M8 14h2m4 0h2" /></span>
+                </p>
+              </div>
+              <div>
+                <label>Vagas</label>
+                <p>{PROPOSAL.spots}</p>
+                <label>Valor tabela</label>
+                <p>20.000,00</p>
+                <label>Valor da Proposta (R$)</label>
+                <p><strong>19.300,00</strong></p>
+              </div>
+              <div>
+                <label>Desconto (R$)</label>
+                <p><strong>700,00 (3,5 %)</strong></p>
+              </div>
+              <div>
+                <label>Acréscimo (R$)</label>
+                <p><strong>-</strong></p>
+              </div>
+              <div>
+                <label>Adiantamento (R$)</label>
+                <p><strong>{advanceLabel}</strong></p>
+              </div>
+            </div>
+          </section>
+          <h3 className="evt-title">Preencher Proposta - ({PROPOSAL.number})</h3>
+          <div className="evt-nav-row">
+            <button className="is-primary" type="button" onClick={demo}>❮ &nbsp;Voltar</button>
+            <button className="is-primary" type="button" onClick={demo}>❯ &nbsp;Próximo</button>
           </div>
-          <p className="pi-totals">
-            Adiantamento: R$ 0,00 &nbsp; Percentual Total: 100,00% &nbsp; Valor Total: R$ 100.000,00 &nbsp; Desconto Comissão: R$ 0,00 &nbsp; Saldo Devedor: R$ 100.000,00
-          </p>
+          <div className="evt-steps">
+            <div><i>✓</i><span>Dados Iniciais</span></div>
+            <div><i>✓</i><span>Cliente</span></div>
+            <div className="is-active">
+              <i><LineIcon d="m4 15 11-11 5 5L9 20H4zM13 6l5 5" /></i>
+              <span>Condições de pagamento</span>
+            </div>
+            <div><i>✓</i><span>Resumo da proposta</span></div>
+          </div>
+          <div className="evt-tabs">
+            <button type="button" onClick={() => setModal(link && link.status !== 'cancelled' ? 'share' : 'form')}>Adiantamento</button>
+            <button type="button" onClick={demo}>Comissão</button>
+            <button type="button" onClick={demo}>Restaurar tabela</button>
+            <button type="button" onClick={demo}>Desconto</button>
+            <button type="button" onClick={demo}>Validar</button>
+            <button type="button" onClick={demo}>Plano de pagamento</button>
+            <button type="button" onClick={demo}>Gráfico comparativo</button>
+            <button type="button" onClick={demo}>Log VPL</button>
+          </div>
+          <div className="evt-payment">
+            <label className="evt-modality" htmlFor="modality">Modalidade</label>
+            <select id="modality" defaultValue={PROPOSAL.modality}>
+              <option>{PROPOSAL.modality}</option>
+            </select>
+            <button className="evt-toggle" type="button" aria-expanded={tableOpen} onClick={() => setTableOpen((open) => !open)}>
+              Tabela Padrão <span>{tableOpen ? '⌄' : '›'}</span>
+            </button>
+            {tableOpen ? (
+              <section>
+                <div className="evt-actions">
+                  <button type="button" disabled>＋ Componentes Disponíveis</button>
+                  <button type="button" disabled>Recalcular vencimentos</button>
+                  <div />
+                  <button type="button" disabled>× Cancelar</button>
+                  <button type="button" disabled>✓ Salvar</button>
+                </div>
+                <div className="evt-table-wrap">
+                  <table className="evt-table">
+                    <thead>
+                      <tr>
+                        <th>Mo...</th>
+                        <th>Sta...</th>
+                        <th>Componente</th>
+                        <th>Quantidade</th>
+                        <th>Vencimento</th>
+                        <th />
+                        <th>Valor Parcela</th>
+                        <th>%</th>
+                        <th>Valor Total</th>
+                        <th>Co...</th>
+                        <th>Comissão</th>
+                        <th>Exc...</th>
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ROWS.map((row) => (
+                        <tr key={row.name}>
+                          <td>⠿</td>
+                          <td className="evt-ok">✓</td>
+                          <td><span className="evt-cell is-gray">{row.name}</span></td>
+                          <td><span className={`evt-cell${row.grayQty ? ' is-gray' : ''}`}>{row.qty}</span></td>
+                          <td><span className="evt-cell">{row.due}</span></td>
+                          <td className="evt-cal"><LineIcon d="M4 5h16v16H4zM4 10h16M8 3v5m8-5v5M8 14h2m4 0h2" /></td>
+                          <td><span className="evt-cell evt-money">{row.amount}</span></td>
+                          <td><span className="evt-cell is-gray">{row.percent}</span></td>
+                          <td><span className="evt-cell evt-money">{row.amount}</span></td>
+                          <td><span className={`evt-check${row.checked ? ' is-on' : ''}`}>{row.checked ? '✓' : ''}</span></td>
+                          <td><span className="evt-cell is-gray evt-money">{row.commission}</span></td>
+                          <td><span className="evt-check" /></td>
+                          <td className="evt-dots">···</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="evt-totals">
+                  <div>
+                    <p>Tabela Padrão: <b>R$ 20.000,00</b></p>
+                    <p>Diferença: <b>R$ 0,00</b></p>
+                    <hr />
+                    <p>Valor Total: (100,00%) <b>R$ 20.000,00</b></p>
+                  </div>
+                  <div>
+                    <p>Valor Total: <b>R$ 20.000,00</b></p>
+                    <p>Comissão Mesa: <b className="evt-red">(-R$ 700,00)</b></p>
+                    <hr />
+                    <p>Saldo Devedor: <b>R$ 19.300,00</b></p>
+                  </div>
+                  <div>
+                    <p>Comissão Mesa Valor Total: <b>R$ 700,00</b></p>
+                    <p>Comissão Mesa Distribuído: <b className="evt-red">(-R$ 700,00)</b></p>
+                    <hr />
+                    <p>Comissão Mesa à Distribuir: <b>R$ 0,00</b></p>
+                  </div>
+                </div>
+              </section>
+            ) : null}
+          </div>
         </main>
-        <footer className="pi-foot">
-          <strong>TOTVS</strong>
-          <span>
-            Portal de Imóveis 12.1.2402 <span className="pi-sobre">Sobre</span>
-          </span>
-        </footer>
       </div>
 
       {modal === 'form' ? (
@@ -260,18 +325,9 @@ export function ProposalPage() {
               <h2 id="advance-title">Adiantamento</h2>
             </header>
             <div className="adv-modal-body">
-              <button className="adv-alert" type="button" onClick={() => setAttentionOpen((open) => !open)} aria-expanded={attentionOpen}>
-                <InfoIcon />
-                <span className="adv-alert-main">
-                  <strong>ATENÇÃO</strong>
-                  {attentionOpen ? (
-                    <p>
-                      O link cobra o adiantamento desta proposta. Sem o WorkNow configurado, o WhatsApp abre com a mensagem e o link prontos para envio.
-                    </p>
-                  ) : null}
-                </span>
-                <ChevronIcon />
-              </button>
+              <div className="adv-alert">
+                <strong>ATENÇÃO</strong>
+              </div>
               <label className="adv-field">
                 <span>
                   Valor R$ da Cobrança <em>*</em>
@@ -305,7 +361,7 @@ export function ProposalPage() {
               <button className="adv-btn adv-btn-secondary" type="button" onClick={() => setModal(null)}>
                 Fechar
               </button>
-              <button className="adv-btn adv-btn-primary" type="button" onClick={publish}>
+              <button className="adv-btn adv-btn-primary" type="button" onClick={publish} disabled={amount <= 0 || (expiryMode === 'vencimento' && !due)}>
                 Gerar link de pagamento
               </button>
             </footer>
@@ -451,7 +507,7 @@ function ShareModal({
   onCancel: () => void
   onNew: () => void
 }) {
-  const qr = `${import.meta.env.BASE_URL}qr-adiantamento.svg`
+  const qr = qrDemo
   return (
     <section className="adv-modal" role="dialog" aria-modal="true" aria-labelledby="share-title">
       <header>
@@ -510,19 +566,22 @@ function ShareModal({
         <section className="adv-panel">
           <h3>Onde deseja abater o adiantamento?</h3>
           <p className="adv-help">Selecione um componente de entrada com saldo suficiente.</p>
-          {ENTRY_COMPONENTS.map((item) => (
-            <button key={item.id} className="adv-choice" type="button" onClick={() => onComponent(item.id)}>
-              <input type="radio" readOnly checked={componentId === item.id} />
-              <span>
-                {item.name}
-                <small>Saldo insuficiente</small>
-              </span>
-              <b>
-                <span>Saldo disponível</span>
-                {formatBRL(item.balance)}
-              </b>
-            </button>
-          ))}
+          {ENTRY_COMPONENTS.map((item) => {
+            const short = link.amount > item.balance || link.status === 'cancelled'
+            return (
+              <button key={item.id} className="adv-choice" type="button" disabled={short} onClick={() => onComponent(item.id)}>
+                <input type="radio" readOnly checked={componentId === item.id} disabled={short} />
+                <span>
+                  {item.name}
+                  {link.amount > item.balance ? <small>Saldo insuficiente</small> : null}
+                </span>
+                <b>
+                  <span>Saldo disponível</span>
+                  {formatBRL(item.balance)}
+                </b>
+              </button>
+            )
+          })}
           <button className="adv-btn adv-btn-outline adv-btn-block" type="button" onClick={onApply}>
             Aplicar adiantamento no componente
           </button>
@@ -563,14 +622,6 @@ function InfoIcon() {
       <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.4" />
       <path d="M8 7.2v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       <circle cx="8" cy="4.6" r="0.8" fill="currentColor" />
-    </svg>
-  )
-}
-
-function ChevronIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.4" />
     </svg>
   )
 }
@@ -622,106 +673,36 @@ function RefreshIcon() {
   )
 }
 
-function BellGlyph() {
+function LineIcon({ d }: { d: string }) {
   return (
-    <>
-      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-        <path d="M8 2.2a3.2 3.2 0 0 0-3.2 3.2v1.8L3.4 9.6h9.2L11.2 7.2V5.4A3.2 3.2 0 0 0 8 2.2Z" fill="none" stroke="currentColor" strokeWidth="1.2" />
-        <path d="M6.8 11.2a1.2 1.2 0 0 0 2.4 0" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      </svg>
-      <i />
-    </>
-  )
-}
-
-function GridGlyph() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <rect x="2" y="2" width="5" height="5" rx="0.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="9" y="2" width="5" height="5" rx="0.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="2" y="9" width="5" height="5" rx="0.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <rect x="9" y="9" width="5" height="5" rx="0.6" fill="none" stroke="currentColor" strokeWidth="1.2" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d={d} />
     </svg>
   )
 }
 
-function UserGlyph() {
+function PeopleIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <circle cx="8" cy="6" r="2.2" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M3.8 13c.8-2 2.3-3 4.2-3s3.4 1 4.2 3" fill="none" stroke="currentColor" strokeWidth="1.2" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="8" r="4" />
+      <path d="M2 20c0-8 14-8 14 0M16 4c6 0 6 8 0 8m2 3c3 0 5 2 5 5" />
     </svg>
   )
 }
 
-function MoneyGlyph() {
+function DocIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M8 4.5v7M6.2 6.2c.4-.6 1-.8 1.8-.8 1 0 1.7.4 1.7 1.2S9 8 8 8s-1.8.4-1.8 1.3.8 1.3 1.8 1.3 1.5-.3 1.8-.8" fill="none" stroke="currentColor" strokeWidth="1.2" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 3h10l4 4v14H5zM14 3v5h5M9 12h6m-6 4h6" />
     </svg>
   )
 }
 
-function CoinGlyph() {
+function GearIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <ellipse cx="8" cy="8" rx="5.5" ry="3.2" fill="none" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M2.5 8v2.2c0 1.8 2.5 3.2 5.5 3.2s5.5-1.4 5.5-3.2V8" fill="none" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  )
-}
-
-function PercentGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <path d="M4 12L12 4" stroke="currentColor" strokeWidth="1.3" />
-      <circle cx="5" cy="5" r="1.4" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <circle cx="11" cy="11" r="1.4" fill="none" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  )
-}
-
-function RestoreGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <path d="M3 8a5 5 0 1 0 1.4-3.4" fill="none" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M3 3.2V6h2.8" fill="none" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  )
-}
-
-function CheckGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <path d="M3.5 8.2l3 3 6-6.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
-    </svg>
-  )
-}
-
-function CalGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <rect x="2.5" y="3.5" width="11" height="10" rx="1" fill="none" stroke="currentColor" strokeWidth="1.2" />
-      <path d="M2.5 6.5h11M5.5 2.5v2M10.5 2.5v2" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  )
-}
-
-function ChartGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <path d="M2.5 12.5h11M4 12V8M8 12V5M12 12V7" stroke="currentColor" strokeWidth="1.3" />
-    </svg>
-  )
-}
-
-function InfoGlyph() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden>
-      <circle cx="8" cy="8" r="6" fill="none" stroke="#8a939a" strokeWidth="1.2" />
-      <path d="M8 7.2V11" stroke="#8a939a" strokeWidth="1.2" />
-      <circle cx="8" cy="5.2" r="0.7" fill="#8a939a" />
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m9 3 1-2h4l1 3 3 1 3-1 2 4-2 2v4l2 2-2 4-3-1-3 1-1 3h-4l-1-3-3-1-3 1-2-4 2-2v-4L1 8l2-4 3 1z" transform="translate(2 2) scale(.83)" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   )
 }

@@ -17,6 +17,7 @@ type AdvanceContextValue = {
   ensureGenerated: () => void
   cancel: () => void
   markPaid: () => void
+  reset: () => void
 }
 
 const AdvanceContext = createContext<AdvanceContextValue | null>(null)
@@ -53,9 +54,13 @@ export function AdvanceProvider({ children }: { children: ReactNode }) {
     setLink((current) => ({ ...(current ?? waitingLink()), status: 'paid' }))
   }, [])
 
+  const reset = useCallback(() => {
+    setLink(null)
+  }, [])
+
   const value = useMemo(
-    () => ({ link, generate, ensureGenerated, cancel, markPaid }),
-    [link, generate, ensureGenerated, cancel, markPaid],
+    () => ({ link, generate, ensureGenerated, cancel, markPaid, reset }),
+    [link, generate, ensureGenerated, cancel, markPaid, reset],
   )
 
   return <AdvanceContext.Provider value={value}>{children}</AdvanceContext.Provider>

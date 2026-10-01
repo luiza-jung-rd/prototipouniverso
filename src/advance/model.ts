@@ -5,23 +5,24 @@ export const DEFAULT_AMOUNT = 1000
 export const WHATSAPP_PHONE = '+55 31 98642-0749'
 
 export const PROPOSAL = {
-  number: '23',
-  enterprise: 'Shopping Run Fast',
-  block: 'VAG.B',
-  unit: 'Apto 000008',
-  area: '150 m²',
-  delivery: '01/01/2099',
-  proposalDate: '14/09/2026',
-  tableValue: 440,
-  proposalValue: 939.18,
+  number: '16840',
+  enterprise: 'RESIDENCIAL VIGORE',
+  block: 'Vagas',
+  unit: 'Unidade 000013',
+  area: '12 m²',
+  delivery: '30/04/2028',
+  proposalDate: '05/05/2025',
+  tableValue: 20000,
+  proposalValue: 19300,
   spots: 0,
-  modality: 'Modalidade Prima Run',
+  modality: 'Modalidade padrão',
   table: 'Tabela Padrão',
 }
 
 export const ENTRY_COMPONENTS = [
-  { id: 'sinal', name: 'Sinal', balance: 60 },
-  { id: 'entrada', name: 'Entrada de valor', balance: 37.59 },
+  { id: 'ato', name: 'Ato', balance: 45727.85 },
+  { id: 'entrada-02', name: 'Entrada 02', balance: 9145.57 },
+  { id: 'entrada-03', name: 'Entrada 03', balance: 9145.57 },
 ]
 
 export function formatDue(iso: string) {
